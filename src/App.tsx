@@ -123,6 +123,14 @@ export default function App() {
           <p>No passages available this week. Please check back later.</p>
         </main>
       )}
+
+      <footer className="site-footer">
+        <span>
+          Bank: week of <strong>{bank.weekOf}</strong>
+        </span>
+        <span aria-hidden="true">·</span>
+        <span>New passages every Monday — this week's suspects, this week's models.</span>
+      </footer>
     </div>
   );
 }

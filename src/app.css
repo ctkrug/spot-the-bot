@@ -483,6 +483,26 @@
   margin-top: var(--space-2);
 }
 
+/* ---- Footer ------------------------------------------------------------- */
+
+.site-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border-top: var(--border-width) solid var(--color-text);
+  background: var(--color-surface-alt);
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.site-footer strong {
+  color: var(--color-text);
+}
+
 /* ---- A11y helpers & focus --------------------------------------------- */
 
 .sr-only {
