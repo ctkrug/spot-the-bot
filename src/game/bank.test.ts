@@ -28,7 +28,7 @@ describe("isValidPassage", () => {
   it("rejects missing or empty text", () => {
     expect(isValidPassage({ ...goodHuman, text: "" })).toBe(false);
     expect(isValidPassage({ ...goodHuman, text: "   " })).toBe(false);
-    const { text: _text, ...noText } = goodHuman;
+    const noText = { id: "h1", origin: "human", style: "diary entry" };
     expect(isValidPassage(noText)).toBe(false);
   });
 
@@ -38,7 +38,7 @@ describe("isValidPassage", () => {
   });
 
   it("requires a non-empty model on AI passages", () => {
-    const { model: _model, ...noModel } = goodAi;
+    const noModel = { id: "a1", text: "A generated sentence.", origin: "ai", style: "news lede" };
     expect(isValidPassage(noModel)).toBe(false);
     expect(isValidPassage({ ...goodAi, model: "" })).toBe(false);
   });
