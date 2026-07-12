@@ -22,6 +22,11 @@ describe("validatePassage", () => {
     const errs = validatePassage({ id: "a", text: "x", origin: "ai", style: "news lede" }, 0);
     expect(errs.join(" ")).toContain("model required");
   });
+
+  it("rejects a non-object passage without touching its fields", () => {
+    expect(validatePassage(null, 0)).toEqual(["passage[0] is not an object"]);
+    expect(validatePassage("nope", 1)).toEqual(["passage[1] is not an object"]);
+  });
 });
 
 describe("validateBank", () => {
@@ -38,6 +43,11 @@ describe("validateBank", () => {
   it("rejects a non-ISO weekOf", () => {
     const { errors } = validateBank({ weekOf: "July 6", passages: [okHuman] });
     expect(errors.join(" ")).toContain("weekOf");
+  });
+
+  it("rejects a non-object bank", () => {
+    expect(validateBank(null)).toEqual({ errors: ["bank is not an object"], validCount: 0, styles: [] });
+    expect(validateBank("nope")).toEqual({ errors: ["bank is not an object"], validCount: 0, styles: [] });
   });
 
   it("rejects a non-array passages field", () => {
