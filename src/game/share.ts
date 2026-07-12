@@ -7,7 +7,7 @@ import type { RoundResult } from "./scoring";
  */
 export function buildShareText(result: RoundResult, weekOf: string): string {
   const lines: string[] = [];
-  lines.push(`Spot the Bot — ${result.score}/${result.total}`);
+  lines.push(`Spot the Bot ${result.score}/${result.total}`);
 
   if (result.nemesis) {
     lines.push(`Fooled ${result.nemesis.count}× by ${result.nemesis.model} 🤖`);
