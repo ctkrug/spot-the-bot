@@ -5,7 +5,7 @@ criteria — no vibes.
 
 ## Epic 1 — Core game loop (the wow moment)
 
-- [ ] **Play a full 10-round quiz with tap-to-guess and a scored reveal** *(wow moment)*
+- [x] **Play a full 10-round quiz with tap-to-guess and a scored reveal** *(wow moment)*
   - Loading the app deals exactly 10 passages, one at a time, from the current bank.
   - Tapping HUMAN or AI immediately advances to the next passage; there is no back button
     and no way to change a submitted answer.
@@ -14,7 +14,7 @@ criteria — no vibes.
     AI-origin passage with `model` metadata — names that model by name.
   - Refreshing the page after the reveal starts a brand-new round rather than resuming.
 
-- [ ] **Passage bank data model + static seed set**
+- [x] **Passage bank data model + static seed set**
   - `Passage`/`PassageBank` types (already scaffolded) are used end-to-end by the game
     loop with no `any`-typed access to passage fields.
   - The seed bank has at least 20 passages so a 10-round game can sample without
@@ -22,14 +22,14 @@ criteria — no vibes.
   - Malformed entries (missing `text` or invalid `origin`) are filtered out at load time
     with a console warning, not a crash.
 
-- [ ] **Score reveal screen shows fooled-by callouts**
+- [x] **Score reveal screen shows fooled-by callouts**
   - The reveal distinguishes "fooled by AI" (guessed human, was AI) from "wrongly accused
     human" (guessed AI, was human) with separate counts.
   - If the player was fooled twice or more by the same model, the reveal calls that model
     out by name in a headline stat (the wow-moment payoff).
   - The reveal is reachable and legible at both 390px and 1440px widths.
 
-- [ ] **Design polish for the core loop**
+- [x] **Design polish for the core loop**
   - The passage card, verdict buttons, and progress strip match the tokens and layout
     intent in `docs/DESIGN.md` (colors, type pairing, hard-shadow depth, spacing scale).
   - Tap feedback (card tilt, button press, correct/wrong pop) and at minimum the `tap`,
