@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import seedBankRaw from "./data/seed-bank.json";
 import { play } from "./audio/sfx";
 import { MuteToggle } from "./components/MuteToggle";
 import { PassageCard } from "./components/PassageCard";
@@ -7,7 +6,8 @@ import { ProgressStrip } from "./components/ProgressStrip";
 import { Reveal } from "./components/Reveal";
 import { VerdictButtons } from "./components/VerdictButtons";
 import { Wordmark } from "./components/Wordmark";
-import { dealRound, loadBank } from "./game/bank";
+import { getCurrentBank } from "./data/currentBank";
+import { dealRound } from "./game/bank";
 import { mulberry32 } from "./game/rng";
 import { scoreRound, type Guess } from "./game/scoring";
 import {
@@ -21,7 +21,7 @@ import {
 import { loadStats, recordRound, saveStats, type Stats } from "./game/stats";
 import { useMute } from "./hooks/useMute";
 
-const bank = loadBank(seedBankRaw);
+const bank = getCurrentBank();
 
 /** A fresh 32-bit seed per round; app runtime (unlike the build) may use time/random. */
 function newSeed(): number {
