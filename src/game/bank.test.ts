@@ -1,3 +1,4 @@
+import fc from "fast-check";
 import { describe, expect, it, vi } from "vitest";
 import type { PassageBank } from "../types/passage";
 import { dealRound, isValidPassage, loadBank, ROUND_SIZE, sanitizePassages } from "./bank";
@@ -134,5 +135,34 @@ describe("dealRound", () => {
   it("treats a NaN size as an empty round rather than throwing", () => {
     expect(() => dealRound(makeBank(24), mulberry32(1), NaN)).not.toThrow();
     expect(dealRound(makeBank(24), mulberry32(1), NaN)).toEqual([]);
+  });
+});
+
+describe("input-boundary fuzzing (property-based)", () => {
+  it("isValidPassage never throws, for any input shape", () => {
+    fc.assert(
+      fc.property(fc.anything(), (value) => {
+        expect(() => isValidPassage(value)).not.toThrow();
+      }),
+    );
+  });
+
+  it("sanitizePassages never throws and never grows past the input length", () => {
+    fc.assert(
+      fc.property(fc.array(fc.anything()), (raw) => {
+        const warn = () => {};
+        const result = sanitizePassages(raw, warn);
+        expect(result.length).toBeLessThanOrEqual(raw.length);
+        expect(result.every((p) => isValidPassage(p))).toBe(true);
+      }),
+    );
+  });
+
+  it("loadBank never throws on an arbitrary object with a passages array", () => {
+    fc.assert(
+      fc.property(fc.array(fc.anything()), fc.anything(), (passages, weekOf) => {
+        expect(() => loadBank({ passages, weekOf }, () => {})).not.toThrow();
+      }),
+    );
   });
 });
