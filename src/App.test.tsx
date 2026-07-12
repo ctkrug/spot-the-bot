@@ -52,6 +52,43 @@ describe("App", () => {
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
   });
 
+  it("accepts H and A keyboard shortcuts as verdicts", () => {
+    render(<App />);
+    const bar = screen.getByRole("progressbar");
+    expect(bar).toHaveAttribute("aria-valuenow", "0");
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
+    });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "A" }));
+    });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "2");
+  });
+
+  it("ignores keyboard shortcuts while a verdict is mid-flip", () => {
+    render(<App />);
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
+    });
+    // Second keypress lands inside the 260ms flip window and must be ignored.
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "a" }));
+    });
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+  });
+
   it("exposes an accessible mute toggle", () => {
     render(<App />);
     const mute = screen.getByRole("button", { name: /Mute sound effects/ });
