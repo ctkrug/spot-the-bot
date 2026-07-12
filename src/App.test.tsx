@@ -52,6 +52,12 @@ describe("App", () => {
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
   });
 
+  it("advances the progressbar after tapping the AI verdict button", () => {
+    render(<App />);
+    verdict("AI");
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+  });
+
   it("accepts H and A keyboard shortcuts as verdicts", () => {
     render(<App />);
     const bar = screen.getByRole("progressbar");
