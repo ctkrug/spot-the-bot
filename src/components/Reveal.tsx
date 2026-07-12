@@ -28,6 +28,12 @@ export function Reveal({ result, weekOf, stats, onPlayAgain }: RevealProps) {
 
   return (
     <section className="reveal" aria-labelledby="reveal-score">
+      <p className="sr-only" role="status" aria-live="assertive">
+        Final score {result.score} out of {result.total}.
+        {result.nemesis
+          ? ` ${result.nemesis.model} fooled you ${result.nemesis.count} times.`
+          : ""}
+      </p>
       <p className="reveal__verdict">VERDICT</p>
       <h2 id="reveal-score" className="reveal__score">
         <span className="reveal__score-num">{result.score}</span>
