@@ -43,6 +43,7 @@ export default function App() {
   const complete = isComplete(game);
   const passage = currentPassage(game);
   const index = currentIndex(game);
+  const outcome = pending && passage ? (passage.origin === pending ? "correct" : "wrong") : null;
 
   const result = useMemo(
     () => (complete ? scoreRound(game.round, game.guesses) : null),
@@ -112,6 +113,7 @@ export default function App() {
             number={index + 1}
             total={game.round.length}
             tilt={pending}
+            outcome={outcome}
           />
           <VerdictButtons onVerdict={handleVerdict} disabled={pending !== null} pressed={pending} />
           <p className="sr-only" role="status" aria-live="polite">
