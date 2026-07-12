@@ -82,6 +82,9 @@ export default function App() {
     recordedRef.current = false;
     setPending(null);
     setGame(startGame(dealRound(bank, mulberry32(newSeed()))));
+    // Thunk the fresh round's card into place (the AudioContext is already
+    // running by now, unlike the autoplay-blocked first deal on page load).
+    play("stamp");
   }, []);
 
   // Keyboard verdicts: H = human, A = ai.

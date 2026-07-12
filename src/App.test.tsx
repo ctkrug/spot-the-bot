@@ -1,6 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
+import * as sfx from "./audio/sfx";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -50,6 +51,15 @@ describe("App", () => {
     act(() => again.click());
     // Back to the stage, fresh round at position zero.
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+  });
+
+  it("thunks the stamp sound when a new round deals on play again", () => {
+    const playSpy = vi.spyOn(sfx, "play");
+    render(<App />);
+    for (let i = 0; i < 10; i++) verdict("HUMAN");
+    playSpy.mockClear();
+    act(() => screen.getByRole("button", { name: /Play again/ }).click());
+    expect(playSpy).toHaveBeenCalledWith("stamp");
   });
 
   it("advances the progressbar after tapping the AI verdict button", () => {
