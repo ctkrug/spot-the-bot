@@ -1,0 +1,31 @@
+{
+  "weekOf": "2026-07-06",
+  "passages": [
+    {
+      "id": "sample-1",
+      "text": "The bus was late again, so I stood under the awning and watched the rain turn the gutter into a small brown river. Somewhere a dog was barking at nothing in particular.",
+      "origin": "human",
+      "style": "diary entry"
+    },
+    {
+      "id": "sample-2",
+      "text": "Overall, this blender exceeded my expectations: the motor runs quietly, the pitcher is dishwasher-safe, and it purees frozen fruit into a smooth consistency in under thirty seconds.",
+      "origin": "ai",
+      "style": "product review",
+      "model": "placeholder-model"
+    },
+    {
+      "id": "sample-3",
+      "text": "City council voted 5-2 Tuesday night to approve the downtown parking overhaul, ending a debate that had dragged on since February.",
+      "origin": "human",
+      "style": "news lede"
+    },
+    {
+      "id": "sample-4",
+      "text": "Whisk the eggs and sugar together until pale and fluffy, about three minutes, then fold in the sifted flour a third at a time to keep the batter light.",
+      "origin": "ai",
+      "style": "recipe intro",
+      "model": "placeholder-model"
+    }
+  ]
+}
