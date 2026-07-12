@@ -1,3 +1,4 @@
+import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { MIN_PASSAGES, MIN_STYLES, validateBank, validatePassage } from "./bank-schema.mjs";
 
@@ -68,5 +69,24 @@ describe("validateBank", () => {
   it("exposes sane threshold constants", () => {
     expect(MIN_PASSAGES).toBe(10);
     expect(MIN_STYLES).toBe(4);
+  });
+});
+
+describe("input-boundary fuzzing (property-based)", () => {
+  it("validatePassage never throws, for any input shape", () => {
+    fc.assert(
+      fc.property(fc.anything(), fc.nat(), (value, index) => {
+        expect(() => validatePassage(value, index)).not.toThrow();
+      }),
+    );
+  });
+
+  it("validateBank never throws and validCount never exceeds the passages array length", () => {
+    fc.assert(
+      fc.property(fc.array(fc.anything()), fc.anything(), (passages, weekOf) => {
+        const { validCount } = validateBank({ weekOf, passages });
+        expect(validCount).toBeLessThanOrEqual(passages.length);
+      }),
+    );
   });
 });
