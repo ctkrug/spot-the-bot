@@ -98,7 +98,7 @@ criteria — no vibes.
   - The built site, when served from an arbitrary subpath via a local static server,
     loads with no broken asset requests in the network tab.
 
-- [ ] **Accessibility pass**
+- [x] **Accessibility pass**
   - Every interactive control (verdict buttons, mute toggle, share, play again) is
     reachable by keyboard with a visible focus ring and has an accessible name.
   - The round progress and reveal score are announced via an ARIA live region for
