@@ -105,7 +105,7 @@ criteria — no vibes.
     screen-reader users.
   - Touch controls exist for every interaction — no mouse-only or hover-only affordance.
 
-- [ ] **Landing copy explaining the weekly-refresh mechanic**
+- [x] **Landing copy explaining the weekly-refresh mechanic**
   - The landing/about copy states, in plain language, that the passage bank changes on a
     weekly cadence and names the current bank's "week of" date somewhere on the page.
   - No lorem-ipsum or bracketed placeholder text remains anywhere in shipped copy.
