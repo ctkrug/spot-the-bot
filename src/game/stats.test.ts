@@ -56,4 +56,17 @@ describe("persistence", () => {
     localStorage.clear();
     expect(loadStats()).toEqual(EMPTY_STATS);
   });
+
+  it("falls back to zero for hand-edited, non-numeric localStorage values", () => {
+    localStorage.setItem("stb.bestScore", "not-a-number");
+    localStorage.setItem("stb.streak", "");
+    localStorage.setItem("stb.plays", "{}");
+    expect(loadStats()).toEqual(EMPTY_STATS);
+  });
+
+  it("survives hand-edited unicode/whitespace garbage without throwing", () => {
+    localStorage.setItem("stb.bestScore", "🤖");
+    localStorage.setItem("stb.streak", "   ");
+    expect(() => loadStats()).not.toThrow();
+  });
 });
