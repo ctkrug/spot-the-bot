@@ -4,29 +4,33 @@ import { pickLatestBankKey } from "./selectBank";
 import seedBankRaw from "./seed-bank.json";
 
 /**
- * Resolve the bank the app should play: the most recent dated file in
- * ./banks/, falling back to the committed seed bank when no valid weekly bank
- * exists. Vite inlines every matched JSON at build time via import.meta.glob,
- * so the resolution is static and needs no network.
+ * Resolve the bank the app should play: the most recent dated file among the
+ * given modules, falling back to the seed bank when no dated module exists or
+ * the resolved bank loads with too few valid passages (the game must never
+ * ship blank). Kept pure and exported so it's testable without needing to
+ * mock Vite's import.meta.glob.
  */
-const bankModules = import.meta.glob<{ default: unknown }>("./banks/*.json", { eager: true });
-
-function resolveRawBank(): unknown {
+export function resolveBank(
+  bankModules: Record<string, { default: unknown } | undefined>,
+  seedBank: unknown,
+  warn: (message: string) => void = console.warn,
+): PassageBank {
   const latestKey = pickLatestBankKey(Object.keys(bankModules));
-  if (latestKey && bankModules[latestKey]) {
-    return bankModules[latestKey].default;
+  const raw = latestKey && bankModules[latestKey] ? bankModules[latestKey].default : seedBank;
+  const bank = loadBank(raw, warn);
+  if (bank.passages.length < 2) {
+    return loadBank(seedBank, warn);
   }
-  return seedBankRaw;
+  return bank;
 }
 
 /**
- * The active bank, validated. If the newest weekly bank somehow loads with too
- * few valid passages, fall back to the seed so the game is never blank.
+ * Every dated weekly bank, inlined at build time via import.meta.glob so
+ * resolution is static and needs no network.
  */
+const bankModules = import.meta.glob<{ default: unknown }>("./banks/*.json", { eager: true });
+
+/** The active bank, validated. */
 export function getCurrentBank(): PassageBank {
-  const bank = loadBank(resolveRawBank());
-  if (bank.passages.length < 2) {
-    return loadBank(seedBankRaw);
-  }
-  return bank;
+  return resolveBank(bankModules, seedBankRaw);
 }
