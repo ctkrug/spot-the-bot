@@ -34,6 +34,9 @@ npm run lint
 npm run build            # -> dist/ (static, subpath-relative)
 
 npm run generate-bank                    # write this ISO week's passage bank
+                                          # (fails if that week's file already exists —
+                                          #  pass --force to overwrite, or --week=YYYY-MM-DD
+                                          #  to target a different week)
 npm run generate-bank -- --week=2026-08-03
 npm run validate-bank src/data/banks/2026-07-13.json
 ```
