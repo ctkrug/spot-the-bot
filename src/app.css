@@ -33,7 +33,6 @@
   flex-direction: column;
   gap: var(--space-4);
   min-height: 65vh;
-  justify-content: center;
 }
 
 .stage--empty {
@@ -131,7 +130,9 @@
   padding: var(--space-5);
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: var(--space-4);
+  flex: 1;
   animation: card-in 160ms ease-out both;
 }
 
