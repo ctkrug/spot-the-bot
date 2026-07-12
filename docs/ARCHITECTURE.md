@@ -89,3 +89,9 @@ static `content-pool.mjs`) sits at 100% line coverage. Property-based tests
 permutation, mulberry32 stays in range), `scoring.ts` (score/fooled/accused
 invariants), and the untrusted-input boundary in `bank.ts`/`bank-schema.mjs`
 (arbitrary garbage never throws) — alongside the example-based suite.
+
+Mutation spot-check (manual, run each QA pass): flipping the nemesis threshold
+in `scoring.ts` (`>= 2` → `> 2`), the round-size clamp in `bank.ts`
+(`Math.min` → `Math.max`), and the completion guard in `state.ts`
+(`>=` → `>`) each broke a distinct test — 3/3 caught, confirming the suite
+isn't decorative.
