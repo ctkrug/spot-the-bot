@@ -110,7 +110,7 @@ export default function App() {
           <PassageCard
             key={passage.id}
             passage={passage}
-            number={index + 1}
+            position={index + 1}
             total={game.round.length}
             tilt={pending}
             outcome={outcome}
