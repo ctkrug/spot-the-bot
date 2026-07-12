@@ -1,3 +1,4 @@
+import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { mulberry32, shuffle } from "./rng";
 
@@ -51,5 +52,48 @@ describe("shuffle", () => {
   it("is deterministic under a fixed seed", () => {
     const input = [1, 2, 3, 4, 5];
     expect(shuffle(input, mulberry32(99))).toEqual(shuffle(input, mulberry32(99)));
+  });
+});
+
+describe("property-based", () => {
+  it("shuffle is always a length-preserving permutation, for any array and seed", () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer()), fc.integer({ min: 0, max: 2 ** 32 - 1 }), (arr, seed) => {
+        const out = shuffle(arr, mulberry32(seed));
+        expect(out).toHaveLength(arr.length);
+        expect(out.slice().sort((a, b) => a - b)).toEqual(arr.slice().sort((a, b) => a - b));
+      }),
+    );
+  });
+
+  it("shuffle never mutates its input, for any array and seed", () => {
+    fc.assert(
+      fc.property(fc.array(fc.integer()), fc.integer({ min: 0, max: 2 ** 32 - 1 }), (arr, seed) => {
+        const before = arr.slice();
+        shuffle(arr, mulberry32(seed));
+        expect(arr).toEqual(before);
+      }),
+    );
+  });
+
+  it("mulberry32 always yields values in [0, 1) for any 32-bit seed", () => {
+    fc.assert(
+      fc.property(fc.integer({ min: 0, max: 2 ** 32 - 1 }), (seed) => {
+        const rng = mulberry32(seed);
+        const v = rng();
+        expect(v).toBeGreaterThanOrEqual(0);
+        expect(v).toBeLessThan(1);
+      }),
+    );
+  });
+
+  it("mulberry32 is deterministic for any seed, including negative and out-of-range ints", () => {
+    fc.assert(
+      fc.property(fc.integer(), (seed) => {
+        const a = mulberry32(seed);
+        const b = mulberry32(seed);
+        expect([a(), a(), a()]).toEqual([b(), b(), b()]);
+      }),
+    );
   });
 });
