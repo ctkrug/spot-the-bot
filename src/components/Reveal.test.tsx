@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { Passage } from "../types/passage";
-import { scoreRound, type Guess } from "../game/scoring";
+import { scoreRound } from "../game/scoring";
 import { EMPTY_STATS } from "../game/stats";
 import { Reveal } from "./Reveal";
 
@@ -13,7 +13,9 @@ const ai = (id: string, model: string): Passage => ({
   model,
 });
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe("Reveal", () => {
   it("names the nemesis model in the headline", () => {
