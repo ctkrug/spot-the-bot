@@ -17,7 +17,13 @@ export function resolveBank(
 ): PassageBank {
   const latestKey = pickLatestBankKey(Object.keys(bankModules));
   const raw = latestKey && bankModules[latestKey] ? bankModules[latestKey].default : seedBank;
-  const bank = loadBank(raw, warn);
+  let bank: PassageBank;
+  try {
+    bank = loadBank(raw, warn);
+  } catch (err) {
+    warn(`Spot the Bot: latest bank is unreadable (${(err as Error).message}), using seed`);
+    return loadBank(seedBank, warn);
+  }
   if (bank.passages.length < 2) {
     return loadBank(seedBank, warn);
   }

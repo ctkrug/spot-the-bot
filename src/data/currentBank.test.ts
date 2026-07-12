@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { resolveBank } from "./currentBank";
 
 const goodPassage = (id: string) => ({
@@ -39,6 +39,22 @@ describe("resolveBank", () => {
       },
     };
     const bank = resolveBank(modules, seedBank);
+    expect(bank.weekOf).toBe("2026-01-01");
+  });
+
+  it("falls back to the seed and warns when the latest bank is the wrong shape", () => {
+    const warn = vi.fn();
+    const modules = {
+      "./banks/2026-07-06.json": { default: ["not", "a", "bank"] },
+    };
+    const bank = resolveBank(modules, seedBank, warn);
+    expect(bank.weekOf).toBe("2026-01-01");
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining("unreadable"));
+  });
+
+  it("falls back to the seed when the latest bank is null", () => {
+    const modules = { "./banks/2026-07-06.json": { default: null } };
+    const bank = resolveBank(modules, seedBank, () => {});
     expect(bank.weekOf).toBe("2026-01-01");
   });
 
