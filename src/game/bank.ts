@@ -1,7 +1,5 @@
-import type { Passage, PassageBank, PassageOrigin } from "../types/passage";
+import type { Passage, PassageBank } from "../types/passage";
 import { shuffle, type Rng } from "./rng";
-
-const VALID_ORIGINS: readonly PassageOrigin[] = ["human", "ai"];
 
 /** Number of passages dealt into a single round. */
 export const ROUND_SIZE = 10;
@@ -21,7 +19,6 @@ export function isValidPassage(value: unknown): value is Passage {
   if (p.origin === "ai" && (typeof p.model !== "string" || p.model.length === 0)) {
     return false;
   }
-  if (VALID_ORIGINS.indexOf(p.origin) === -1) return false;
   return true;
 }
 
