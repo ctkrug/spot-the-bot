@@ -25,9 +25,11 @@ The schedule lives in `.github/workflows/refresh-bank.yml`
    - Writes `src/data/banks/<YYYY-MM-DD>.json`. **Refuses to overwrite** an
      existing week unless `--force`, so past banks are retained.
 2. The workflow re-validates every bank file and commits any new week.
-3. At build time the app globs `src/data/banks/*.json`, plays the **most recent**
-   by ISO date, and falls back to `src/data/seed-bank.json` if none are valid —
-   so the game is never blank.
+3. At build time the app globs `src/data/banks/*.json` and plays the most
+   recent bank dated **on or before the build date** — a week prepped ahead
+   of schedule (see `--week=` below) sits in the repo without going live
+   until its Monday actually arrives — falling back to
+   `src/data/seed-bank.json` if none are valid, so the game is never blank.
 
 ## The live-API seam
 

@@ -52,7 +52,9 @@ App (state machine)  ── dealRound(rng) → 10 passages
 - `game/stats.ts` — `recordRound` streak/best rules + localStorage persistence.
 - `game/share.ts` — spoiler-free share text (no passage content leaks).
 - `data/selectBank.ts` — `bankDate` / `pickLatestBankKey` (ISO-week selection).
-- `data/currentBank.ts` — glob banks, pick latest, fall back to seed.
+- `data/currentBank.ts` — glob banks, pick the latest whose date is not in
+  the future (a bank prepped ahead for next week must not go live early),
+  fall back to seed.
 - `lib/storage.ts` — fault-tolerant localStorage wrapper (degrades, never throws).
 
 ### Audio (`src/audio/sfx.ts`)
