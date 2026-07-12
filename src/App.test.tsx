@@ -43,8 +43,8 @@ describe("App", () => {
     render(<App />);
     for (let i = 0; i < 10; i++) verdict("HUMAN");
     // Reveal replaces the stage: score heading + play-again CTA appear.
-    const reveal = screen.getByRole("heading", { level: 2 });
-    expect(reveal.textContent).toMatch(/\/\s*10/);
+    const reveal = document.getElementById("reveal-score");
+    expect(reveal?.textContent).toMatch(/\/\s*10/);
     const again = screen.getByRole("button", { name: /Play again/ });
     expect(again).toBeInTheDocument();
 

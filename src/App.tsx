@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { play } from "./audio/sfx";
+import { About } from "./components/About";
 import { MuteToggle } from "./components/MuteToggle";
 import { PassageCard } from "./components/PassageCard";
 import { ProgressStrip } from "./components/ProgressStrip";
@@ -35,7 +36,9 @@ function answeredResults(state: GameState): boolean[] {
 
 export default function App() {
   const { muted, toggleMute } = useMute();
-  const [game, setGame] = useState<GameState>(() => startGame(dealRound(bank, mulberry32(newSeed()))));
+  const [game, setGame] = useState<GameState>(() =>
+    startGame(dealRound(bank, mulberry32(newSeed()))),
+  );
   const [stats, setStats] = useState<Stats>(() => loadStats());
   const [pending, setPending] = useState<Guess | null>(null);
   const recordedRef = useRef(false);
@@ -43,7 +46,8 @@ export default function App() {
   const complete = isComplete(game);
   const passage = currentPassage(game);
   const index = currentIndex(game);
-  const outcome = pending && passage ? (passage.origin === pending ? "correct" : "wrong") : null;
+  const outcome =
+    pending && passage ? (passage.origin === pending ? "correct" : "wrong") : null;
 
   const result = useMemo(
     () => (complete ? scoreRound(game.round, game.guesses) : null),
@@ -99,43 +103,63 @@ export default function App() {
   }, [complete, pending, handleVerdict]);
 
   return (
-    <div className="app">
-      <header className="topbar">
-        <Wordmark />
-        <MuteToggle muted={muted} onToggle={toggleMute} />
-      </header>
+    <>
+      <div className="app">
+        <header className="topbar">
+          <Wordmark />
+          <MuteToggle muted={muted} onToggle={toggleMute} />
+        </header>
 
-      {complete && result ? (
-        <Reveal result={result} weekOf={bank.weekOf} stats={stats} onPlayAgain={playAgain} />
-      ) : passage ? (
-        <main className="stage">
-          <ProgressStrip total={game.round.length} current={index} results={answeredResults(game)} />
-          <PassageCard
-            key={passage.id}
-            passage={passage}
-            position={index + 1}
-            total={game.round.length}
-            tilt={pending}
-            outcome={outcome}
+        {complete && result ? (
+          <Reveal
+            result={result}
+            weekOf={bank.weekOf}
+            stats={stats}
+            onPlayAgain={playAgain}
           />
-          <VerdictButtons onVerdict={handleVerdict} disabled={pending !== null} pressed={pending} />
-          <p className="sr-only" role="status" aria-live="polite">
-            Passage {index + 1} of {game.round.length}
-          </p>
-        </main>
-      ) : (
-        <main className="stage stage--empty">
-          <p>No passages available this week. Please check back later.</p>
-        </main>
-      )}
+        ) : passage ? (
+          <main className="stage">
+            <ProgressStrip
+              total={game.round.length}
+              current={index}
+              results={answeredResults(game)}
+            />
+            <PassageCard
+              key={passage.id}
+              passage={passage}
+              position={index + 1}
+              total={game.round.length}
+              tilt={pending}
+              outcome={outcome}
+            />
+            <VerdictButtons
+              onVerdict={handleVerdict}
+              disabled={pending !== null}
+              pressed={pending}
+            />
+            <p className="sr-only" role="status" aria-live="polite">
+              Passage {index + 1} of {game.round.length}
+            </p>
+          </main>
+        ) : (
+          <main className="stage stage--empty">
+            <p>No passages available this week. Please check back later.</p>
+          </main>
+        )}
 
-      <footer className="site-footer">
-        <span>
-          Bank: week of <strong>{bank.weekOf}</strong>
-        </span>
-        <span aria-hidden="true">·</span>
-        <span>New passages every Monday — this week's suspects, this week's models.</span>
-      </footer>
-    </div>
+        <footer className="site-footer">
+          <span>
+            Bank: week of <strong>{bank.weekOf}</strong>
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>
+            New passages every Monday. This week&rsquo;s suspects, this week&rsquo;s
+            models.
+          </span>
+        </footer>
+      </div>
+
+      <About weekOf={bank.weekOf} />
+    </>
   );
 }

@@ -621,6 +621,110 @@
   color: var(--color-text);
 }
 
+/* ---- About / SEO section ------------------------------------------------ */
+
+.about {
+  border-top: var(--border-width) solid var(--color-text);
+  background: var(--color-surface-alt);
+  padding: var(--space-6) var(--space-4);
+}
+
+.about__inner {
+  width: min(720px, 100%);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.about__title {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.about__lede {
+  font-size: 1.05rem;
+}
+
+.about p {
+  margin: 0;
+  line-height: 1.6;
+  max-width: 66ch;
+}
+
+.about__heading {
+  margin-top: var(--space-4);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--color-accent);
+  padding-bottom: var(--space-1);
+  align-self: flex-start;
+}
+
+.about__features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.about__features li {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-text);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-hard);
+  padding: var(--space-3);
+  line-height: 1.5;
+}
+
+.about__faq {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.about__faq dt {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: var(--space-1);
+}
+
+.about__faq dd {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  max-width: 66ch;
+}
+
+.about__cta {
+  margin-top: var(--space-4);
+}
+
+.about__cta .btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-surface);
+}
+
+.about__colophon {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.about a {
+  color: var(--color-accent-support);
+  font-weight: 600;
+}
+
 /* ---- A11y helpers & focus --------------------------------------------- */
 
 .sr-only {
@@ -675,5 +779,10 @@
 
   .reveal__tally {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Clear the fixed verdict bar so the CTA and colophon stay scrollable. */
+  .about {
+    padding: var(--space-5) var(--space-3) 140px;
   }
 }
