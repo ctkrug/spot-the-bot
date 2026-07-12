@@ -2,9 +2,9 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { readNumber, readString, writeNumber, writeString } from "./storage";
 
 afterEach(() => {
-  localStorage.clear();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+  localStorage.clear();
 });
 
 describe("string storage", () => {
@@ -28,6 +28,16 @@ describe("string storage", () => {
     vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new Error("quota");
     });
+    expect(() => writeString("k", "v")).not.toThrow();
+  });
+
+  it("returns the fallback when localStorage itself is unavailable", () => {
+    vi.stubGlobal("localStorage", undefined);
+    expect(readString("k", "safe")).toBe("safe");
+  });
+
+  it("no-ops a write when localStorage itself is unavailable", () => {
+    vi.stubGlobal("localStorage", undefined);
     expect(() => writeString("k", "v")).not.toThrow();
   });
 });
