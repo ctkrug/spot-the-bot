@@ -95,6 +95,22 @@ describe("App", () => {
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
   });
 
+  it("never accumulates keydown listeners across repeated rounds", () => {
+    const addSpy = vi.spyOn(window, "addEventListener");
+    const removeSpy = vi.spyOn(window, "removeEventListener");
+    render(<App />);
+    for (let round = 0; round < 3; round++) {
+      for (let i = 0; i < 10; i++) verdict("HUMAN");
+      const again = screen.queryByRole("button", { name: /Play again/ });
+      if (again) act(() => again.click());
+    }
+    const adds = addSpy.mock.calls.filter((c) => c[0] === "keydown").length;
+    const removes = removeSpy.mock.calls.filter((c) => c[0] === "keydown").length;
+    // Each verdict re-attaches the listener (its deps change); every prior
+    // attachment must be cleaned up first, so at most one stays net-active.
+    expect(adds - removes).toBeLessThanOrEqual(1);
+  });
+
   it("exposes an accessible mute toggle", () => {
     render(<App />);
     const mute = screen.getByRole("button", { name: /Mute sound effects/ });
