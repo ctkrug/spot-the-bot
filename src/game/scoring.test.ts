@@ -1,3 +1,4 @@
+import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import type { Passage } from "../types/passage";
 import { scoreAnswer, scoreRound, type Guess } from "./scoring";
@@ -95,5 +96,61 @@ describe("scoreRound", () => {
     const r = scoreRound(passages, ["ai"]);
     expect(r.fooledByModels).toEqual([]);
     expect(r.fooledByAiCount).toBe(0);
+  });
+});
+
+const passageArb = fc
+  .record({
+    id: fc.uuid(),
+    text: fc.string({ minLength: 1 }),
+    origin: fc.constantFrom<"human" | "ai">("human", "ai"),
+    style: fc.constantFrom("diary entry", "news lede", "product review"),
+    model: fc.constantFrom("GPT-5", "Claude 5 Sonnet", "Gemini 3"),
+  })
+  .map((p): Passage => (p.origin === "ai" ? p : { ...p, model: undefined }));
+
+const roundArb = fc
+  .array(passageArb, { minLength: 0, maxLength: 15 })
+  .chain((passages) =>
+    fc.tuple(
+      fc.constant(passages),
+      fc.array(fc.constantFrom<Guess>("human", "ai"), {
+        minLength: passages.length,
+        maxLength: passages.length,
+      }),
+    ),
+  );
+
+describe("scoreRound — property-based", () => {
+  it("score, fooledByAiCount, and wronglyAccusedCount always partition the round", () => {
+    fc.assert(
+      fc.property(roundArb, ([passages, guesses]) => {
+        const r = scoreRound(passages, guesses);
+        expect(r.total).toBe(passages.length);
+        expect(r.score + r.fooledByAiCount + r.wronglyAccusedCount).toBe(r.total);
+      }),
+    );
+  });
+
+  it("fooledByModels counts always sum to fooledByAiCount", () => {
+    fc.assert(
+      fc.property(roundArb, ([passages, guesses]) => {
+        const r = scoreRound(passages, guesses);
+        const modelTotal = r.fooledByModels.reduce((sum, m) => sum + m.count, 0);
+        expect(modelTotal).toBe(r.fooledByAiCount);
+      }),
+    );
+  });
+
+  it("nemesis, when present, is the top-ranked model with count >= 2", () => {
+    fc.assert(
+      fc.property(roundArb, ([passages, guesses]) => {
+        const r = scoreRound(passages, guesses);
+        if (r.nemesis) {
+          expect(r.nemesis).toEqual(r.fooledByModels[0]);
+          expect(r.nemesis.count).toBeGreaterThanOrEqual(2);
+        }
+      }),
+    );
   });
 });
