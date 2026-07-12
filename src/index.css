@@ -1,0 +1,78 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap");
+
+:root {
+  /* Neo-brutalist poster palette — see docs/DESIGN.md */
+  --color-bg: #f5f1e8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #e8e2d4;
+  --color-text: #191510;
+  --color-text-muted: #6b6355;
+  --color-accent: #ff4b3e;
+  --color-accent-support: #2d5bff;
+  --color-success: #2baa6e;
+  --color-danger: #ff4b3e;
+
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-ui: "IBM Plex Mono", ui-monospace, monospace;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  --radius: 4px;
+  --border-width: 3px;
+  --shadow-hard: 4px 4px 0 var(--color-text);
+
+  --motion-ui: 180ms ease-out;
+  --motion-game: 100ms ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c1812;
+    --color-surface: #262019;
+    --color-surface-alt: #302921;
+    --color-text: #f5f1e8;
+    --color-text-muted: #b8ae9c;
+    --shadow-hard: 4px 4px 0 #0c0a07;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  margin: 0;
+}
+
+button {
+  font-family: var(--font-ui);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
