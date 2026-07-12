@@ -16,13 +16,19 @@ export function bankDate(pathOrName: string): string | null {
  * Given bank file keys (paths or names), return the key with the newest ISO
  * date. Keys without a parseable date are ignored. Returns null if none match.
  * ISO dates sort lexicographically, so a string compare is date order.
+ *
+ * `now`, if given (as a YYYY-MM-DD string), excludes any key dated after it —
+ * a bank prepped ahead of time for a future week (`generate-bank --week=`,
+ * per docs/PIPELINE.md) must not go live on the next build before its week
+ * actually arrives.
  */
-export function pickLatestBankKey(keys: readonly string[]): string | null {
+export function pickLatestBankKey(keys: readonly string[], now?: string): string | null {
   let best: string | null = null;
   let bestDate = "";
   for (const key of keys) {
     const date = bankDate(key);
     if (date === null) continue;
+    if (now !== undefined && date > now) continue;
     if (best === null || date > bestDate) {
       best = key;
       bestDate = date;

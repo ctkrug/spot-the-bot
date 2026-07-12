@@ -14,8 +14,9 @@ export function resolveBank(
   bankModules: Record<string, { default: unknown } | undefined>,
   seedBank: unknown,
   warn: (message: string) => void = console.warn,
+  now?: string,
 ): PassageBank {
-  const latestKey = pickLatestBankKey(Object.keys(bankModules));
+  const latestKey = pickLatestBankKey(Object.keys(bankModules), now);
   const raw = latestKey && bankModules[latestKey] ? bankModules[latestKey].default : seedBank;
   let bank: PassageBank;
   try {
@@ -36,7 +37,8 @@ export function resolveBank(
  */
 const bankModules = import.meta.glob<{ default: unknown }>("./banks/*.json", { eager: true });
 
-/** The active bank, validated. */
+/** The active bank, validated. Never a bank dated later than today's build. */
 export function getCurrentBank(): PassageBank {
-  return resolveBank(bankModules, seedBankRaw);
+  const today = new Date().toISOString().slice(0, 10);
+  return resolveBank(bankModules, seedBankRaw, console.warn, today);
 }

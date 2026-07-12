@@ -33,4 +33,21 @@ describe("pickLatestBankKey", () => {
     const keys = ["./banks/2025-12-29.json", "./banks/2026-01-05.json"];
     expect(pickLatestBankKey(keys)).toBe("./banks/2026-01-05.json");
   });
+
+  it("excludes a bank prepped for a future week when given a cutoff date", () => {
+    // A Sunday build with next Monday's week already committed ahead of time
+    // must still serve this week's bank, not jump the gun a day early.
+    const keys = ["./banks/2026-07-06.json", "./banks/2026-07-13.json"];
+    expect(pickLatestBankKey(keys, "2026-07-12")).toBe("./banks/2026-07-06.json");
+  });
+
+  it("includes a bank dated exactly on the cutoff date", () => {
+    const keys = ["./banks/2026-07-06.json", "./banks/2026-07-13.json"];
+    expect(pickLatestBankKey(keys, "2026-07-13")).toBe("./banks/2026-07-13.json");
+  });
+
+  it("falls back to null when every dated key is in the future", () => {
+    const keys = ["./banks/2026-07-13.json"];
+    expect(pickLatestBankKey(keys, "2026-07-06")).toBeNull();
+  });
 });

@@ -70,4 +70,17 @@ describe("resolveBank", () => {
     const bank = resolveBank(modules, seedBank, () => {});
     expect(bank.passages).toHaveLength(2);
   });
+
+  it("never serves a bank prepped for a week that hasn't arrived yet", () => {
+    const modules = {
+      "./banks/2026-07-06.json": {
+        default: { weekOf: "2026-07-06", passages: [goodPassage("this-week-1"), goodPassage("this-week-2")] },
+      },
+      "./banks/2026-07-13.json": {
+        default: { weekOf: "2026-07-13", passages: [goodPassage("next-week-1"), goodPassage("next-week-2")] },
+      },
+    };
+    const bank = resolveBank(modules, seedBank, console.warn, "2026-07-12");
+    expect(bank.weekOf).toBe("2026-07-06");
+  });
 });
