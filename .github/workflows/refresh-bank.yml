@@ -1,0 +1,52 @@
+name: Refresh passage bank
+
+# Regenerates the weekly passage bank every Monday. The offline generator runs
+# with no API key, so this workflow is live today. When a frontier-model call
+# is wired into scripts/generate-bank.mjs (see docs/PIPELINE.md), add the API
+# key as a repository secret and reference it here — the cadence stays weekly.
+
+on:
+  schedule:
+    # 07:00 UTC every Monday — start of the ISO week.
+    - cron: "0 7 * * 1"
+  workflow_dispatch: {} # allow manual runs from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      - run: npm ci
+
+      # Generate this ISO week's bank. Fails loudly (non-zero exit, no partial
+      # write) if fewer than 10 valid passages or fewer than 4 styles.
+      - name: Generate bank
+        run: npm run generate-bank
+
+      # Belt-and-suspenders: re-validate whatever landed on disk this run.
+      - name: Validate generated banks
+        run: |
+          for f in src/data/banks/*.json; do
+            node scripts/validate-bank.mjs "$f"
+          done
+
+      - name: Commit new bank
+        run: |
+          git config user.name "ctkrug"
+          git config user.email "ctkrug4501@gmail.com"
+          if git diff --quiet; then
+            echo "No new bank to commit this week."
+            exit 0
+          fi
+          git add src/data/banks
+          git commit -m "chore(data): refresh weekly passage bank"
+          git push
