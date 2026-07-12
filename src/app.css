@@ -399,6 +399,7 @@
 /* ---- Reveal ------------------------------------------------------------- */
 
 .reveal {
+  position: relative;
   flex: 1;
   width: min(680px, 100% - var(--space-5));
   margin: 0 auto;
@@ -407,7 +408,59 @@
   flex-direction: column;
   gap: var(--space-3);
   text-align: center;
+  overflow: hidden;
   animation: reveal-in 220ms ease-out both;
+}
+
+.reveal > :not(.reveal__confetti) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Win confetti: torn paper scraps, CSS-only ------------------------- */
+
+.reveal__confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.reveal__confetti-piece {
+  --n: 14;
+  position: absolute;
+  top: -24px;
+  left: calc((100% / var(--n)) * var(--i) + 4%);
+  width: 10px;
+  height: 16px;
+  background: var(--color-accent);
+  border: 2px solid var(--color-text);
+  transform: rotate(calc(var(--i) * 47deg));
+  animation: confetti-fall calc(1400ms + (var(--i) * 90ms)) calc(var(--i) * 60ms) ease-in both;
+}
+
+.reveal__confetti-piece:nth-child(3n) {
+  background: var(--color-accent-support);
+}
+
+.reveal__confetti-piece:nth-child(3n + 1) {
+  background: var(--color-success);
+}
+
+.reveal__confetti-piece:nth-child(4n) {
+  width: 14px;
+  height: 10px;
+}
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(0) rotate(calc(var(--i) * 47deg));
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(340px) rotate(calc(var(--i) * 47deg + 220deg));
+    opacity: 0;
+  }
 }
 
 @keyframes reveal-in {

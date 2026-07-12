@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import type { RoundResult } from "../game/scoring";
 import { buildShareText } from "../game/share";
 import type { Stats } from "../game/stats";
@@ -9,6 +9,9 @@ interface RevealProps {
   stats: Stats;
   onPlayAgain: () => void;
 }
+
+/** Count of decorative confetti scraps on the reveal overlay. */
+const CONFETTI_PIECES = 14;
 
 /** Full-bleed reveal that replaces the stage — the score moment gets the screen. */
 export function Reveal({ result, weekOf, stats, onPlayAgain }: RevealProps) {
@@ -28,6 +31,15 @@ export function Reveal({ result, weekOf, stats, onPlayAgain }: RevealProps) {
 
   return (
     <section className="reveal" aria-labelledby="reveal-score">
+      <div className="reveal__confetti" aria-hidden="true">
+        {Array.from({ length: CONFETTI_PIECES }, (_, i) => (
+          <span
+            key={i}
+            className="reveal__confetti-piece"
+            style={{ "--i": i } as CSSProperties}
+          />
+        ))}
+      </div>
       <p className="sr-only" role="status" aria-live="assertive">
         Final score {result.score} out of {result.total}.
         {result.nemesis

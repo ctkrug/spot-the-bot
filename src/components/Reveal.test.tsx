@@ -78,4 +78,14 @@ describe("Reveal", () => {
     act(() => screen.getByRole("button", { name: /Play again/ }).click());
     expect(onPlayAgain).toHaveBeenCalledOnce();
   });
+
+  it("drops decorative confetti that stays out of the accessibility tree", () => {
+    const result = scoreRound([ai("a1", "GPT-5")], ["ai"]);
+    const { container } = render(
+      <Reveal result={result} weekOf="2026-07-06" stats={EMPTY_STATS} onPlayAgain={() => {}} />,
+    );
+    const confetti = container.querySelector(".reveal__confetti");
+    expect(confetti).toHaveAttribute("aria-hidden", "true");
+    expect(confetti?.querySelectorAll(".reveal__confetti-piece").length).toBeGreaterThan(0);
+  });
 });
