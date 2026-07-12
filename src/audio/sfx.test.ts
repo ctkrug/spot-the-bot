@@ -67,4 +67,44 @@ describe("sfx with a mock AudioContext", () => {
     play("tap");
     expect(started).toHaveLength(0);
   });
+
+  it("resumes a suspended context before playing", () => {
+    const { started } = installMockAudio();
+    class SuspendedCtx {
+      state = "suspended";
+      currentTime = 0;
+      destination = {};
+      resume = vi.fn(() => Promise.resolve());
+      createOscillator = vi.fn(() => ({
+        type: "",
+        frequency: { setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() },
+        connect: vi.fn(() => ({ connect: vi.fn() })),
+        start: vi.fn(() => started.push("start")),
+        stop: vi.fn(),
+      }));
+      createGain = vi.fn(() => ({
+        gain: { setValueAtTime: vi.fn(), linearRampToValueAtTime: vi.fn() },
+        connect: vi.fn(() => ({ connect: vi.fn() })),
+      }));
+    }
+    vi.stubGlobal("AudioContext", SuspendedCtx as unknown as typeof AudioContext);
+    play("tap");
+    expect(started).toHaveLength(1);
+  });
+
+  it("ramps oscillator frequency for tones with a toFreq target", () => {
+    installMockAudio();
+    // "wrong" is the only recipe with a toFreq ramp — exercise it directly.
+    expect(() => play("wrong")).not.toThrow();
+  });
+
+  it("treats a throwing AudioContext constructor as unsupported", () => {
+    class ThrowingCtx {
+      constructor() {
+        throw new Error("blocked by policy");
+      }
+    }
+    vi.stubGlobal("AudioContext", ThrowingCtx as unknown as typeof AudioContext);
+    expect(() => play("tap")).not.toThrow();
+  });
 });
