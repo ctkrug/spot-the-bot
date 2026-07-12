@@ -16,6 +16,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { MIN_PASSAGES, MIN_STYLES, validateBank } from "./lib/bank-schema.mjs";
 import { CONTENT_POOL, TOPICAL_MODELS } from "./lib/content-pool.mjs";
+import { buildAiPassages, buildHumanPassages, isoWeekMonday, parseArgs } from "./lib/generate-bank-helpers.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const BANKS_DIR = join(ROOT, "src", "data", "banks");
@@ -25,43 +26,12 @@ function fail(message) {
   process.exit(1);
 }
 
-function parseArgs(argv) {
-  const args = { force: false, week: null };
-  for (const a of argv) {
-    if (a === "--force") args.force = true;
-    else if (a.startsWith("--week=")) args.week = a.slice("--week=".length);
-    else fail(`unknown argument: ${a}`);
-  }
-  return args;
+let args;
+try {
+  args = parseArgs(process.argv.slice(2));
+} catch (err) {
+  fail(err.message);
 }
-
-/** Monday of the ISO week containing `date`, as YYYY-MM-DD. */
-function isoWeekMonday(date) {
-  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-  const day = d.getUTCDay() || 7; // Sunday(0) -> 7
-  d.setUTCDate(d.getUTCDate() - (day - 1));
-  return d.toISOString().slice(0, 10);
-}
-
-/**
- * Assemble AI-origin passages, stamping each with a topical model. In a live
- * pipeline these strings would come from prompting that model; here they come
- * from the pool. Round-robins the topical models so the week's bank features
- * whichever models are current.
- */
-function buildAiPassages(models) {
-  return CONTENT_POOL.ai.map((p, i) => ({
-    ...p,
-    origin: "ai",
-    model: models[i % models.length],
-  }));
-}
-
-function buildHumanPassages() {
-  return CONTENT_POOL.human.map((p) => ({ ...p, origin: "human" }));
-}
-
-const args = parseArgs(process.argv.slice(2));
 const week = args.week ?? isoWeekMonday(new Date());
 if (!/^\d{4}-\d{2}-\d{2}$/.test(week)) fail(`--week must be YYYY-MM-DD, got "${week}"`);
 
@@ -72,7 +42,7 @@ if (existsSync(outPath) && !args.force) {
 
 const bank = {
   weekOf: week,
-  passages: [...buildHumanPassages(), ...buildAiPassages(TOPICAL_MODELS)],
+  passages: [...buildHumanPassages(CONTENT_POOL.human), ...buildAiPassages(CONTENT_POOL.ai, TOPICAL_MODELS)],
 };
 
 // Validate BEFORE writing so a malformed bank never lands on disk.
