@@ -39,7 +39,7 @@ criteria — no vibes.
 
 ## Epic 2 — Weekly content pipeline
 
-- [ ] **Script generates a new passage bank against a topical model**
+- [x] **Script generates a new passage bank against a topical model**
   - A documented script (`npm run generate-bank` or equivalent) produces a `PassageBank`
     JSON file containing both AI-origin and human-origin passages across at least 4
     distinct styles (news lede, product review, diary entry, recipe intro, or similar).
@@ -47,13 +47,13 @@ criteria — no vibes.
   - Running the script twice against the same inputs does not silently overwrite the
     previous week's bank file — old banks are retained (see next story).
 
-- [ ] **Passage bank versioning by week**
+- [x] **Passage bank versioning by week**
   - Bank files are stored dated by ISO week (e.g. `banks/2026-07-06.json`) and the app
     loads the most recent one by filename/date, not a hardcoded path.
   - A manifest or directory listing lets the build determine "current" vs. "past" banks
     without hardcoding a filename in app code.
 
-- [ ] **CI job refreshes the bank on a schedule**
+- [x] **CI job refreshes the bank on a schedule**
   - A separate GitHub Actions workflow (or a documented cron-triggered job, since bank
     generation needs an API key CI won't have by default) is specified with the exact
     trigger cadence (weekly) and the exact command it runs — this can be a scheduled
@@ -62,7 +62,7 @@ criteria — no vibes.
   - The workflow (or documented process) fails loudly (non-zero exit, no partial file
     write) if generation produces fewer than 10 valid passages.
 
-- [ ] **Validate and gracefully degrade on malformed generated content**
+- [x] **Validate and gracefully degrade on malformed generated content**
   - A schema check rejects a generated bank missing required fields before it's written
     to disk, with a non-zero exit code and a clear stderr message.
   - If no valid bank exists at build time, the app falls back to the committed seed bank
@@ -70,20 +70,20 @@ criteria — no vibes.
 
 ## Epic 3 — Share & replay
 
-- [ ] **Share-your-score card**
+- [x] **Share-your-score card**
   - After the reveal, a "Share" action produces a copyable text summary (score + the
     model that fooled the player, if any) with one click/tap, confirmed by a visible
     "copied" state.
   - The shared text never includes the full passage content (respects source brevity /
     avoids spoiling the bank for others).
 
-- [ ] **Play-again flow with local streak tracking**
+- [x] **Play-again flow with local streak tracking**
   - A "Play again" CTA on the reveal starts a new round without a full page reload.
   - The player's best score and current streak (consecutive rounds ≥ 8/10, or a
     documented threshold) persist in `localStorage` and are visible somewhere in the UI.
   - Clearing `localStorage` resets the streak to zero without breaking the app.
 
-- [ ] **Design polish for share/results**
+- [x] **Design polish for share/results**
   - The share card and streak display use the same tokens/type pairing as the core loop
     (no visual seam between "the game" and "the results").
   - Touch targets for share/play-again meet the ≥44px minimum and have themed hover/focus/
@@ -91,7 +91,7 @@ criteria — no vibes.
 
 ## Epic 4 — Deploy & polish
 
-- [ ] **Static build deployable under a subpath**
+- [x] **Static build deployable under a subpath**
   - `npm run build` produces a single self-contained output directory with only relative
     asset paths (verified by grepping the built HTML/JS for a leading `/` in an asset
     URL and finding none).
