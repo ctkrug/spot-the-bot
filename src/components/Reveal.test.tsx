@@ -44,6 +44,33 @@ describe("Reveal", () => {
     expect(screen.getByRole("button", { name: /Copied/ })).toBeInTheDocument();
   });
 
+  it("shows a mild fooled message when no single model reaches nemesis threshold", () => {
+    const result = scoreRound([ai("a1", "GPT-5"), ai("a2", "Claude")], ["human", "human"]);
+    expect(result.nemesis).toBeNull();
+    render(<Reveal result={result} weekOf="2026-07-06" stats={EMPTY_STATS} onPlayAgain={() => {}} />);
+    expect(screen.getByText(/slipped 2 passages past you/)).toBeInTheDocument();
+  });
+
+  it("shows a clean message when every guess was correct", () => {
+    const result = scoreRound([ai("a1", "GPT-5")], ["ai"]);
+    render(<Reveal result={result} weekOf="2026-07-06" stats={EMPTY_STATS} onPlayAgain={() => {}} />);
+    expect(screen.getByText(/Not fooled once/)).toBeInTheDocument();
+  });
+
+  it("stays on the share label without crashing when the clipboard write rejects", async () => {
+    const writeText = vi.fn().mockRejectedValue(new Error("denied"));
+    Object.assign(navigator, { clipboard: { writeText } });
+    const result = scoreRound([ai("a1", "GPT-5")], ["human"]);
+    render(<Reveal result={result} weekOf="2026-07-06" stats={EMPTY_STATS} onPlayAgain={() => {}} />);
+
+    await act(async () => {
+      screen.getByRole("button", { name: /Share score/ }).click();
+    });
+
+    expect(screen.getByRole("button", { name: /Share score/ })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Copied/ })).not.toBeInTheDocument();
+  });
+
   it("invokes onPlayAgain when the CTA is clicked", () => {
     const onPlayAgain = vi.fn();
     const result = scoreRound([ai("a1", "GPT-5")], ["ai"]);
