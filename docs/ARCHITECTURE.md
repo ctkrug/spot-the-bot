@@ -8,11 +8,12 @@ base-path-relative `dist/` deployable under a subpath.
 
 ```bash
 npm install
-npm run dev            # local dev server
-npm test               # vitest (jsdom) — all pure logic + App integration
-npm run lint           # eslint
-npm run build          # tsc -b && vite build -> dist/
-npm run generate-bank  # write a new weekly bank (see Content pipeline)
+npm run dev             # local dev server
+npm test                # vitest (jsdom) — all pure logic + App integration
+npm run test:coverage   # vitest --coverage (v8) — line coverage per module
+npm run lint            # eslint
+npm run build           # tsc -b && vite build -> dist/
+npm run generate-bank   # write a new weekly bank (see Content pipeline)
 npm run validate-bank <file>   # schema-check a bank, non-zero exit on failure
 ```
 
@@ -69,9 +70,22 @@ no-ops when unsupported (tests) or muted.
 ## Content pipeline (`scripts/`)
 - `scripts/lib/bank-schema.mjs` — shared validation (mirrors `bank.ts`).
 - `scripts/lib/content-pool.mjs` — curated human/AI passage pool + topical models.
+- `scripts/lib/generate-bank-helpers.mjs` — pure helpers used by the generator
+  (`isoWeekMonday`, `buildAiPassages`/`buildHumanPassages`, `parseArgs`), split
+  out so they're unit-testable without touching argv/fs.
 - `scripts/generate-bank.mjs` — assemble → validate → write `banks/<week>.json`
   (refuses overwrite; fails loudly on < 10 passages / < 4 styles).
 - `scripts/validate-bank.mjs` — standalone validator CLI.
 - `.github/workflows/refresh-bank.yml` — weekly (Mon 07:00 UTC) regeneration.
+- `.github/workflows/ci.yml` — lint + test + build on every push/PR to `main`.
 
 See `docs/PIPELINE.md` for the weekly cadence and the live-API seam.
+
+## Testing notes
+
+Core logic (`src/game/`, `src/data/`, `src/lib/`, `scripts/lib/*.mjs` minus the
+static `content-pool.mjs`) sits at 100% line coverage. Property-based tests
+(`fast-check`) cover the pure-math/parser modules — `rng.ts` (shuffle is a
+permutation, mulberry32 stays in range), `scoring.ts` (score/fooled/accused
+invariants), and the untrusted-input boundary in `bank.ts`/`bank-schema.mjs`
+(arbitrary garbage never throws) — alongside the example-based suite.
