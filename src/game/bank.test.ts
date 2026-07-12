@@ -121,4 +121,18 @@ describe("dealRound", () => {
     const b = dealRound(makeBank(24), mulberry32(5)).map((p) => p.id);
     expect(a).toEqual(b);
   });
+
+  it("clamps a negative or zero size to an empty round", () => {
+    expect(dealRound(makeBank(24), mulberry32(1), -5)).toEqual([]);
+    expect(dealRound(makeBank(24), mulberry32(1), 0)).toEqual([]);
+  });
+
+  it("clamps a size larger than the bank to the bank's length", () => {
+    expect(dealRound(makeBank(3), mulberry32(1), 1_000_000)).toHaveLength(3);
+  });
+
+  it("treats a NaN size as an empty round rather than throwing", () => {
+    expect(() => dealRound(makeBank(24), mulberry32(1), NaN)).not.toThrow();
+    expect(dealRound(makeBank(24), mulberry32(1), NaN)).toEqual([]);
+  });
 });
