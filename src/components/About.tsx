@@ -9,50 +9,54 @@ interface AboutProps {
 /**
  * Below-the-fold explainer + FAQ. Lives under the game so the page answers
  * "is this an AI or human text game" for a first-time visitor (and a search
- * engine) without cluttering the round itself. Styled to match docs/DESIGN.md.
+ * engine) without cluttering the round itself.
  */
 export function About({ weekOf }: AboutProps) {
   return (
     <section className="about" aria-labelledby="about-title">
       <div className="about__inner">
         <h1 id="about-title" className="about__title">
-          An AI or human text game that refreshes every week
+          A daily AI-or-human text game with receipts
         </h1>
         <p className="about__lede">
-          Spot the Bot is a quick browser game: read ten short passages and guess, one at
-          a time, whether each was written by a human or by AI. No login, no install,
-          about two minutes a round. The catch is that the passages are not a fixed set. A
-          new batch is generated every Monday against whatever AI model is topical that
-          week, so the writing you judge keeps pace with the models people actually use.
+          Spot the Bot deals you a fresh Daily Case: ten short passages, one verdict each —
+          human or AI. No login, no install, about two minutes. What makes it different is
+          that the labels are real on both sides: every human passage is genuine, attributed
+          writing (Scott&rsquo;s Antarctic diary, Twain&rsquo;s travel notes, a 1924 sports
+          lede), and every AI passage was actually written by the model it names. After each
+          guess you see who really wrote it and the one-line tell that gives it away.
         </p>
 
-        <h2 className="about__heading">Why it stays fresh</h2>
+        <h2 className="about__heading">The Daily Case</h2>
         <p>
-          Most guess-the-AI quizzes ship one hardcoded set of examples and never touch it
-          again. They are fun for a week and then stale, because model writing moves
-          faster than any hand-picked list. Spot the Bot regenerates its passage bank on a
-          weekly schedule and keeps every past bank, so your round always draws from
-          writing no older than the current week. The bank in play right now is the week
-          of <strong>{weekOf}</strong>.
+          Everyone who plays on the same day gets the same ten passages, so scores are
+          comparable — share your result grid without spoiling a single answer. Miss a day
+          and your streak resets; the next case lands at midnight, your time. Finished
+          today&rsquo;s case? There&rsquo;s an unlimited practice mode, dealt at random from
+          the same bank (currently the week of <strong>{weekOf}</strong>).
         </p>
 
-        <h2 className="about__heading">What you get</h2>
+        <h2 className="about__heading">Where the passages come from</h2>
         <ul className="about__features">
           <li>
-            <strong>Ten passages, one verdict each.</strong> No back button and no
-            second-guessing, the way you would actually skim text in the wild.
+            <strong>Human passages are real and attributed.</strong> They&rsquo;re drawn from
+            public-domain writing — diaries, letters, dispatches, cookbooks — and the reveal
+            names the author and year. Where spelling was modernized or an excerpt condensed,
+            the attribution says &ldquo;adapted.&rdquo;
           </li>
           <li>
-            <strong>The reveal names names.</strong> If the same model fooled you twice,
-            it calls that model out by name, not just a shrug at &ldquo;AI.&rdquo;
+            <strong>AI passages are really AI.</strong> Each one names the model that
+            actually produced it — including the hard tier, written by a model told to pass
+            as human. No fabricated attributions, ever: if a passage says a model wrote it,
+            that model wrote it.
           </li>
           <li>
-            <strong>A spoiler-free score card.</strong> Copy your result and share it
-            without giving away the week&rsquo;s answers.
+            <strong>Every card teaches you a tell.</strong> Right or wrong, you get the
+            attribution and a one-line read on what gives the passage away.
           </li>
           <li>
-            <strong>Runs entirely in your browser.</strong> No account and no tracking;
-            your streak and best score are saved locally.
+            <strong>Runs entirely in your browser.</strong> No account and no tracking of
+            your play; streaks and stats live in localStorage.
           </li>
         </ul>
 
@@ -60,36 +64,35 @@ export function About({ weekOf }: AboutProps) {
         <dl className="about__faq">
           <dt>Is this an AI or human text game?</dt>
           <dd>
-            Yes. Every round is ten short passages, and your only job is to guess AI or
-            human for each one, then see how many you got right.
+            Yes. Ten short passages a day, and your only job is to judge each one human or
+            AI, then see how many you got right — and which model fooled you.
           </dd>
 
-          <dt>How do you guess if writing is AI or human?</dt>
+          <dt>How do you tell if writing is AI or human?</dt>
           <dd>
-            Look for the tells. AI writing often reaches for tidy summary sentences, even
-            sentiment, and stock phrases like &ldquo;a testament to&rdquo; or &ldquo;in
-            today&rsquo;s world.&rdquo; Human writing tends to be messier, more specific,
-            and willing to leave a thought unfinished. Spot the Bot is a low-stakes way to
-            practice guessing AI or human writing on fresh examples.
+            Look for the tells. Classic AI writing reaches for tidy summary sentences, even
+            sentiment, and stock phrases. But modern models can fake mess and specificity,
+            which is exactly what the hard tier here does — the reveal explains the subtler
+            tells, like punchlines that land a beat too cleanly or a lede with no checkable
+            facts in it.
           </dd>
 
-          <dt>Can you really spot AI generated text?</dt>
+          <dt>Are the quotes really from Scott, Twain, and Keats?</dt>
           <dd>
-            Sometimes, and it depends on the style and the model. That is the whole point:
-            to find out how good you actually are at spotting AI generated text this week,
-            not last year.
+            Yes — the human side is public-domain writing with the author, work, and year
+            shown after you guess. Attributions marked &ldquo;adapted&rdquo; mean modernized
+            spelling or a condensed excerpt, never changed substance.
           </dd>
 
-          <dt>How often do the passages change?</dt>
+          <dt>When do new passages arrive?</dt>
           <dd>
-            Every Monday. A new bank is generated against the model that is topical that
-            week, and old banks are kept so the game never goes stale.
+            A new case is dealt daily from the current bank, and the bank itself refreshes
+            weekly — with fresh model-written passages when the live generation pipeline
+            runs.
           </dd>
 
           <dt>Do I need an account?</dt>
-          <dd>
-            No. Open the link and play. Your streak and best score stay in your browser.
-          </dd>
+          <dd>No. Open the link and play. Your streaks and stats stay in your browser.</dd>
         </dl>
 
         <div className="about__cta">

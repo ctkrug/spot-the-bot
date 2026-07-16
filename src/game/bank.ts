@@ -74,3 +74,29 @@ export function dealRound(
   const take = Math.max(0, Math.min(size, bank.passages.length));
   return shuffle(bank.passages, rng).slice(0, take);
 }
+
+/**
+ * Deal a stratified round: as close to half human / half AI as the bank
+ * allows, then shuffled together. A pure-shuffle deal can hand out 8 AI and
+ * 2 humans, which makes the round feel rigged; stratifying keeps every round
+ * a fair lineup. Deterministic for a given bank + rng seed, which is what
+ * makes the shared Daily Case possible.
+ */
+export function dealStratified(
+  bank: PassageBank,
+  rng: Rng,
+  size: number = ROUND_SIZE,
+): Passage[] {
+  const humans = shuffle(bank.passages.filter((p) => p.origin === "human"), rng);
+  const ais = shuffle(bank.passages.filter((p) => p.origin === "ai"), rng);
+  const take = Math.max(0, Math.min(size, humans.length + ais.length));
+  const wantHuman = Math.min(humans.length, Math.ceil(take / 2));
+  const wantAi = Math.min(ais.length, take - wantHuman);
+  // If one side ran short, backfill from the other so the round stays full.
+  const extraHuman = Math.min(humans.length - wantHuman, take - wantHuman - wantAi);
+  const picked = [
+    ...humans.slice(0, wantHuman + extraHuman),
+    ...ais.slice(0, wantAi),
+  ];
+  return shuffle(picked, rng);
+}

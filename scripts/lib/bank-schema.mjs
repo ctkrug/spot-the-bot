@@ -3,6 +3,7 @@
 // src/game/bank.ts (isValidPassage) — kept in sync deliberately.
 
 const ORIGINS = ["human", "ai"];
+const DIFFICULTIES = [1, 2, 3];
 
 /** Validate one passage. Returns an array of human-readable error strings. */
 export function validatePassage(p, index) {
@@ -17,6 +18,21 @@ export function validatePassage(p, index) {
   if (!ORIGINS.includes(p.origin)) errors.push(`${at}.origin must be human|ai`);
   if (p.origin === "ai" && (typeof p.model !== "string" || p.model.length === 0)) {
     errors.push(`${at}.model required for ai passages`);
+  }
+  // Honesty guard: a human passage claiming a model is a labeling bug.
+  if (p.origin === "human" && p.model !== undefined) {
+    errors.push(`${at}.model must be absent for human passages`);
+  }
+  // Optional enrichment fields (2026-07-16): validated when present so older
+  // banks without them remain fully valid.
+  if (p.tell !== undefined && (typeof p.tell !== "string" || p.tell.trim().length === 0)) {
+    errors.push(`${at}.tell must be a non-empty string when present`);
+  }
+  if (p.source !== undefined && (typeof p.source !== "string" || p.source.trim().length === 0)) {
+    errors.push(`${at}.source must be a non-empty string when present`);
+  }
+  if (p.difficulty !== undefined && !DIFFICULTIES.includes(p.difficulty)) {
+    errors.push(`${at}.difficulty must be 1, 2, or 3 when present`);
   }
   return errors;
 }

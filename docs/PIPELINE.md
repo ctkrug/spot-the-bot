@@ -31,19 +31,24 @@ The schedule lives in `.github/workflows/refresh-bank.yml`
    until its Monday actually arrives — falling back to
    `src/data/seed-bank.json` if none are valid, so the game is never blank.
 
-## The live-API seam
+## Live generation (implemented, key-gated)
 
-Today the generator draws AI passages from a curated offline pool so the
-pipeline runs in CI with **no API key**. To go live:
+The generator has two sources, merged into one bank:
 
-1. Replace `buildAiPassages` in `scripts/generate-bank.mjs` with a call to the
-   current frontier model (e.g. the Anthropic SDK), prompting for short passages
-   in each style. Keep the same output schema: `{ id, text, origin: "ai",
-   style, model }`, `model` set to the model you actually called.
-2. Add the API key as a repository secret and reference it in
-   `refresh-bank.yml`.
-3. Update `TOPICAL_MODELS` when the topical model of the week changes (the human
-   half of the pool can stay; it's length- and style-matched ballast).
+- **Offline pool** (`scripts/lib/content-pool.mjs`) — always included. Human
+  passages are real public-domain writing with `source` attributions; AI
+  passages carry the `model` that actually wrote them plus a `tell`.
+- **Live passages** — with `--live` (the weekly workflow passes it) and an
+  `ANTHROPIC_API_KEY`, `generate-bank.mjs` asks the current frontier model
+  (env `BANK_MODEL`, default `claude-opus-4-8`) for ~12 fresh passages across
+  the pool's styles, stamps them with that model's real display name, and
+  validates each before merging. On a missing key or any API/parse failure it
+  warns and ships the offline pool alone — the refresh can never break.
+
+To turn live generation on, add `ANTHROPIC_API_KEY` as a repository secret;
+`refresh-bank.yml` already passes it through. The honesty rule is enforced in
+the schema: an AI passage must name its real producing model, and a human
+passage must not claim one.
 
 The schema validator (`scripts/lib/bank-schema.mjs`) is the contract between
 generation and the app — as long as generated output passes it, nothing

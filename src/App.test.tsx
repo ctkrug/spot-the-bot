@@ -1,6 +1,6 @@
 import { act, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import App from "./App";
+import App, { VERDICT_MS } from "./App";
 import * as sfx from "./audio/sfx";
 
 beforeEach(() => {
@@ -13,71 +13,82 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-/** Click a verdict and let the flip transition resolve. */
+/** Click a verdict, then let the evidence strip auto-advance. */
 function verdict(name: "HUMAN" | "AI") {
   act(() => {
-    screen.getByRole("button", { name: new RegExp(name) }).click();
+    screen.getByRole("button", { name: new RegExp(`^${name}`) }).click();
   });
   act(() => {
-    vi.advanceTimersByTime(300);
+    vi.advanceTimersByTime(VERDICT_MS + 100);
   });
 }
 
 describe("App", () => {
-  it("renders the wordmark and both verdict buttons on load", () => {
+  it("renders the wordmark, case chip, and both verdict buttons on load", () => {
     render(<App />);
     expect(screen.getByLabelText("Spot the Bot")).toBeInTheDocument();
+    expect(screen.getByText(/CASE №\d+/)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /HUMAN/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^AI/ })).toBeInTheDocument();
   });
 
-  it("shows a passage and advances the progressbar after a verdict", () => {
+  it("advances the progressbar and shows the evidence strip after a verdict", () => {
     render(<App />);
-    const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuenow", "0");
-    verdict("HUMAN");
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+    act(() => {
+      screen.getByRole("button", { name: /HUMAN/ }).click();
+    });
+    // Progress advances immediately; the truth strip shows until dismissed.
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+    expect(screen.getByText(/tap to continue/)).toBeInTheDocument();
+    act(() => {
+      vi.advanceTimersByTime(VERDICT_MS + 100);
+    });
+    expect(screen.queryByText(/tap to continue/)).not.toBeInTheDocument();
   });
 
-  it("reaches the reveal after ten verdicts and can play again", () => {
+  it("reaches the reveal after ten verdicts and can start a practice round", () => {
     render(<App />);
     for (let i = 0; i < 10; i++) verdict("HUMAN");
-    // Reveal replaces the stage: score heading + play-again CTA appear.
     const reveal = document.getElementById("reveal-score");
     expect(reveal?.textContent).toMatch(/\/\s*10/);
-    const again = screen.getByRole("button", { name: /Play again/ });
-    expect(again).toBeInTheDocument();
+    const practice = screen.getByRole("button", { name: /Play a practice round/ });
 
-    act(() => again.click());
-    // Back to the stage, fresh round at position zero.
+    act(() => practice.click());
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+    expect(screen.getByText("PRACTICE")).toBeInTheDocument();
   });
 
-  it("thunks the stamp sound when a new round deals on play again", () => {
+  it("persists the finished daily so a remount shows the reveal, not a replay", () => {
+    const first = render(<App />);
+    for (let i = 0; i < 10; i++) verdict("AI");
+    expect(document.getElementById("reveal-score")).toBeInTheDocument();
+    first.unmount();
+
+    render(<App />);
+    // Straight to the closed case — no fresh round.
+    expect(document.getElementById("reveal-score")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^HUMAN/ })).not.toBeInTheDocument();
+  });
+
+  it("thunks the stamp sound when a practice round deals", () => {
     const playSpy = vi.spyOn(sfx, "play");
     render(<App />);
     for (let i = 0; i < 10; i++) verdict("HUMAN");
     playSpy.mockClear();
-    act(() => screen.getByRole("button", { name: /Play again/ }).click());
+    act(() => screen.getByRole("button", { name: /Play a practice round/ }).click());
     expect(playSpy).toHaveBeenCalledWith("stamp");
-  });
-
-  it("advances the progressbar after tapping the AI verdict button", () => {
-    render(<App />);
-    verdict("AI");
-    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
   });
 
   it("accepts H and A keyboard shortcuts as verdicts", () => {
     render(<App />);
-    const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuenow", "0");
+    expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
 
     act(() => {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
     });
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(VERDICT_MS + 100);
     });
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
 
@@ -85,24 +96,36 @@ describe("App", () => {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "A" }));
     });
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(VERDICT_MS + 100);
     });
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "2");
   });
 
-  it("ignores keyboard shortcuts while a verdict is mid-flip", () => {
+  it("ignores verdict keys while the evidence strip is showing", () => {
     render(<App />);
     act(() => {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
     });
-    // Second keypress lands inside the 260ms flip window and must be ignored.
+    // Second keypress lands inside the verdict window and must be ignored.
     act(() => {
       window.dispatchEvent(new KeyboardEvent("keydown", { key: "a" }));
     });
     act(() => {
-      vi.advanceTimersByTime(300);
+      vi.advanceTimersByTime(VERDICT_MS + 100);
     });
     expect(screen.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
+  });
+
+  it("skips the evidence strip early with the space key", () => {
+    render(<App />);
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: "h" }));
+    });
+    expect(screen.getByText(/tap to continue/)).toBeInTheDocument();
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent("keydown", { key: " " }));
+    });
+    expect(screen.queryByText(/tap to continue/)).not.toBeInTheDocument();
   });
 
   it("never accumulates keydown listeners across repeated rounds", () => {
@@ -111,14 +134,22 @@ describe("App", () => {
     render(<App />);
     for (let round = 0; round < 3; round++) {
       for (let i = 0; i < 10; i++) verdict("HUMAN");
-      const again = screen.queryByRole("button", { name: /Play again/ });
+      const again = screen.queryByRole("button", {
+        name: /Play a practice round|Play again/,
+      });
       if (again) act(() => again.click());
     }
     const adds = addSpy.mock.calls.filter((c) => c[0] === "keydown").length;
     const removes = removeSpy.mock.calls.filter((c) => c[0] === "keydown").length;
-    // Each verdict re-attaches the listener (its deps change); every prior
-    // attachment must be cleaned up first, so at most one stays net-active.
     expect(adds - removes).toBeLessThanOrEqual(1);
+  });
+
+  it("opens and closes the stats panel", () => {
+    render(<App />);
+    act(() => screen.getByRole("button", { name: /Statistics/ }).click());
+    expect(screen.getByRole("dialog", { name: /CASE RECORD/i })).toBeInTheDocument();
+    act(() => screen.getByRole("button", { name: /Close statistics/ }).click());
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("exposes an accessible mute toggle", () => {

@@ -2,59 +2,68 @@
 
 **Can you still tell human writing from AI?**
 
-**▶ Live demo: [apps.charliekrug.com/spot-the-bot](https://apps.charliekrug.com/spot-the-bot/)**
+**▶ Live: [apps.charliekrug.com/spot-the-bot](https://apps.charliekrug.com/spot-the-bot/)**
 
 [![CI](https://github.com/ctkrug/spot-the-bot/actions/workflows/ci.yml/badge.svg)](https://github.com/ctkrug/spot-the-bot/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Spot the Bot is a two-minute browser game. You read ten short passages, one at a time, and
-guess for each whether a human or an AI wrote it. Then the reveal: your score, the passages
-that fooled you, and the name of the model that fooled you twice.
+Spot the Bot is a daily browser game. Every day deals the same ten short passages to
+everyone — the **Daily Case**. Read each one, stamp a verdict (HUMAN or AI), and the card
+flips to the receipt: who really wrote it, and the one-line tell that gives it away. At
+the end: your score, a detective rank, an emoji grid to share (spoiler-free), and a streak
+to defend at midnight.
 
-The point is the content. Most guess-the-AI quizzes hardcode ten examples once and go stale
-in a month. Spot the Bot regenerates its passage bank every Monday against whatever model is
-topical that week, and keeps every past bank, so the round you play is never older than the
-current week.
+## The honesty contract
+
+Most guess-the-AI quizzes have a dirty secret: the "human" examples were written by
+whoever made the quiz, and the model attributions are set dressing. Spot the Bot's whole
+premise is that the labels are true:
+
+- **Human passages are real, attributed, public-domain writing** — Scott's Antarctic
+  diary, Pepys on the Great Fire, Keats's letters, Twain's travel notes, Grantland Rice's
+  1924 Four Horsemen lede. The reveal names the author, work, and year. Where spelling was
+  modernized or an excerpt condensed, the attribution says *(adapted)*.
+- **AI passages were actually written by the model they name** — including a hard tier
+  deliberately styled to pass as human. No model is ever credited with text it didn't
+  produce.
+- **Every passage carries a tell**: one honest sentence on what gives it away, shown after
+  you guess. Play ten rounds and you've had a micro-lesson in reading machine text.
 
 ## Play
 
-No install and no account. Open the [live demo](https://apps.charliekrug.com/spot-the-bot/),
-read the passage, and tap **HUMAN** or **AI** (or press `H` / `A`). Ten rounds, no back
-button. Your streak and best score save locally; the share card is spoiler-free so posting a
-score never leaks the week's answers.
-
-## A sample passage
-
-> **EXHIBIT 03/10** · diary entry
->
-> Today was a meaningful reminder that life's small moments matter most. I paused to
-> appreciate the morning light and felt grateful for the quiet beauty that surrounds us
-> every single day.
-
-Human or bot? That one is AI. The tells are the tidy summary sentence and the even, grateful
-tone; a real diary tends to be messier and more specific. Guess right or wrong and the
-reveal names the model. The share card looks like this:
+No install and no account. Open the [live game](https://apps.charliekrug.com/spot-the-bot/),
+read the passage, and tap **HUMAN** or **AI** (or press `H` / `A`; space skips the reveal
+strip). Ten exhibits, no back button. The Daily Case is the same for everyone — compare
+grids without spoiling answers:
 
 ```
-Spot the Bot 8/10
-Fooled 2× by Claude 5 Sonnet 🤖
-Week of 2026-07-06
+Spot the Bot — Case #5
+🟩🟩🟥🟩🟩 🟩🟩🟥🟩🟩 8/10
+SENIOR DETECTOR
+Fooled 2× by Claude Fable 5 🤖
+🔥 4-day streak
+https://apps.charliekrug.com/spot-the-bot/
 ```
 
-## How the weekly bank works
+Daily streaks, best scores, and a score distribution live in a stats panel — all in
+localStorage, no tracking. Finished the daily? Practice mode deals unlimited random
+rounds from the same bank.
 
-1. A scheduled script prompts the week's topical model for short passages across a mix of
-   styles (news lede, product review, diary entry, recipe intro, and more) and pairs each
-   with a length- and subject-matched human passage.
-2. The set is shuffled, de-identified, validated, and written to a dated bank file
-   (`src/data/banks/YYYY-MM-DD.json`). A malformed or short bank never lands on disk.
-3. At build time the app loads the most recent bank dated on or before today, falling back
-   to a committed seed bank so the game is never blank.
-4. Old banks are kept, so any week's round draws from writing no older than that week.
+## How the bank works
 
-The generator currently draws AI passages from a curated offline pool so CI needs no API
-key. Swapping in a live model call is a single documented seam. See
-[`docs/PIPELINE.md`](docs/PIPELINE.md).
+1. `npm run generate-bank` assembles a dated bank (`src/data/banks/YYYY-MM-DD.json`) from
+   `scripts/lib/content-pool.mjs` — the curated pool where every entry carries its honest
+   attribution (`source` for humans, `model` + `tell` for AI). Validated before writing;
+   a malformed or short bank never lands on disk.
+2. With `--live` and an `ANTHROPIC_API_KEY`, the generator additionally asks the current
+   frontier model for a dozen fresh passages (stamped with that model's real name) and
+   merges them in. Without the key it warns and ships the offline pool — CI never breaks.
+   See [`docs/PIPELINE.md`](docs/PIPELINE.md).
+3. A GitHub Action regenerates the bank every Monday; old banks are kept. At build time
+   the app plays the most recent bank dated on or before today, falling back to a
+   committed seed bank so the game is never blank.
+4. The Daily Case is dealt deterministically from the bank — seeded by the calendar date,
+   stratified half human / half AI — so everyone gets the same case.
 
 ## Develop
 
@@ -69,20 +78,21 @@ npm run build            # -> dist/ (static, subpath-relative)
 npm run generate-bank                       # write this ISO week's bank
                                             # (refuses to overwrite an existing week;
                                             #  pass --force, or --week=YYYY-MM-DD)
-npm run generate-bank -- --week=2026-08-03
+npm run generate-bank -- --live             # + fresh passages from the frontier model
 npm run validate-bank src/data/banks/2026-07-13.json
 ```
 
-Core game logic (`src/game`, `src/data`, `src/lib`) is pure and sits at 100% line coverage,
-with `fast-check` property tests on the RNG, scoring, and the untrusted-input boundary.
-See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module map.
+Core game logic (`src/game`, `src/data`, `src/lib`) is pure and heavily tested, with
+`fast-check` property tests on the RNG, scoring, share text, and the untrusted-input
+boundary. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the module map.
 
 ## Stack
 
 - **TypeScript + React**, built with **Vite** into a static, self-contained bundle
 - **Vitest** for unit and property-based tests
 - WebAudio-synthesized sound effects, zero binary assets
-- A Node content-pipeline script generates the weekly passage bank
+- A Node content pipeline generates the weekly passage bank (offline pool + optional
+  live frontier-model generation via the Anthropic SDK)
 
 ## License
 

@@ -29,6 +29,8 @@ export interface RoundResult {
   fooledByModels: FooledByModel[];
   /** The single model that fooled the player ≥2 times, if any (the payoff). */
   nemesis: FooledByModel | null;
+  /** Longest run of consecutive correct answers within the round. */
+  maxCombo: number;
 }
 
 /** Score a single guess against a passage. */
@@ -49,6 +51,13 @@ export function scoreRound(passages: readonly Passage[], guesses: readonly Guess
 
   const answers = passages.map((p, i) => scoreAnswer(p, guesses[i]));
   const score = answers.filter((a) => a.correct).length;
+
+  let maxCombo = 0;
+  let run = 0;
+  for (const a of answers) {
+    run = a.correct ? run + 1 : 0;
+    maxCombo = Math.max(maxCombo, run);
+  }
 
   let fooledByAiCount = 0;
   let wronglyAccusedCount = 0;
@@ -80,5 +89,6 @@ export function scoreRound(passages: readonly Passage[], guesses: readonly Guess
     wronglyAccusedCount,
     fooledByModels,
     nemesis,
+    maxCombo,
   };
 }

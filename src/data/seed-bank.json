@@ -2,160 +2,140 @@
   "weekOf": "2026-07-06",
   "passages": [
     {
-      "id": "seed-diary-h1",
-      "text": "The bus was late again, so I stood under the awning and watched the rain turn the gutter into a small brown river. Somewhere a dog was barking at nothing in particular.",
-      "origin": "human",
-      "style": "diary entry"
-    },
-    {
-      "id": "seed-diary-a1",
-      "text": "Today was a meaningful reminder that life's small moments matter most. I paused to appreciate the morning light and felt grateful for the quiet beauty that surrounds us every single day.",
-      "origin": "ai",
+      "id": "h-diary-scott-1",
+      "text": "Great God! this is an awful place and terrible enough for us to have laboured to it without the reward of priority.",
       "style": "diary entry",
-      "model": "Claude 5 Sonnet"
+      "source": "Capt. Robert Falcon Scott's diary at the South Pole, 17 January 1912",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-diary-h2",
-      "text": "Couldn't sleep so I reorganized the spice drawer at 2am. The cumin was behind the cinnamon this whole time. Felt like solving a small crime nobody reported.",
-      "origin": "human",
-      "style": "diary entry"
-    },
-    {
-      "id": "seed-diary-a2",
-      "text": "It has been a busy but rewarding week. Between work and personal projects, I have learned the importance of balance, and I look forward to carrying these lessons into the days ahead.",
-      "origin": "ai",
+      "id": "h-diary-scott-2",
+      "text": "It seems a pity, but I do not think I can write more. For God's sake look after our people.",
       "style": "diary entry",
-      "model": "GPT-5"
+      "source": "Scott's final diary entry, Antarctica, March 1912",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-review-h1",
-      "text": "Bought these for my dad who has arthritis. He can actually open the jars now without calling me over. Grip is a little bulky but honestly that's the whole point. Four stars, would've been five if they came in more colors.",
-      "origin": "human",
-      "style": "product review"
+      "id": "h-diary-pepys-1",
+      "text": "We saw the fire grow in a most horrid malicious bloody flame, not like the fine flame of an ordinary fire. It made me weep to see it.",
+      "style": "diary entry",
+      "source": "Samuel Pepys on the Great Fire of London, 2 September 1666 (adapted)",
+      "difficulty": 3,
+      "origin": "human"
     },
     {
-      "id": "seed-review-a1",
-      "text": "Overall, this blender exceeded my expectations: the motor runs quietly, the pitcher is dishwasher-safe, and it purees frozen fruit into a smooth consistency in under thirty seconds. Highly recommended for any kitchen.",
-      "origin": "ai",
-      "style": "product review",
-      "model": "Claude 5 Sonnet"
+      "id": "h-diary-darwin-1",
+      "text": "Delight itself, however, is a weak term to express the feelings of a naturalist who, for the first time, has wandered by himself in a Brazilian forest.",
+      "style": "diary entry",
+      "source": "Charles Darwin, Beagle diary, February 1832",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-review-h2",
-      "text": "look, it's a phone case. it's blue. it protects the phone. dropped it twice already and the phone lived. the packaging had way too much tape though, took me a solid minute to get in.",
-      "origin": "human",
-      "style": "product review"
+      "id": "h-letter-keats-1",
+      "text": "I mean Negative Capability, that is, when a man is capable of being in uncertainties, mysteries, doubts, without any irritable reaching after fact and reason.",
+      "style": "letter",
+      "source": "John Keats to his brothers, 22 December 1817",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-review-a2",
-      "text": "This product is a fantastic addition to your daily routine. With its sleek design and reliable performance, it delivers excellent value and is sure to leave you completely satisfied with your purchase.",
-      "origin": "ai",
-      "style": "product review",
-      "model": "Gemini 3 Pro"
+      "id": "h-letter-adams-1",
+      "text": "I desire you would remember the ladies, and be more generous and favourable to them than your ancestors. Do not put such unlimited power into the hands of the husbands. Remember, all men would be tyrants if they could.",
+      "style": "letter",
+      "source": "Abigail Adams to John Adams, 31 March 1776",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-news-h1",
-      "text": "City council voted 5-2 Tuesday night to approve the downtown parking overhaul, ending a debate that had dragged on since February and drawing groans from a half-empty gallery.",
-      "origin": "human",
-      "style": "news lede"
+      "id": "h-letter-ballou-1",
+      "text": "If I do not return, my dear Sarah, never forget how much I love you, nor that, when my last breath escapes me on the battlefield, it will whisper your name.",
+      "style": "letter",
+      "source": "Maj. Sullivan Ballou to his wife, 14 July 1861 (adapted)",
+      "difficulty": 3,
+      "origin": "human"
     },
     {
-      "id": "seed-news-a1",
-      "text": "Local officials gathered on Tuesday to announce a new initiative aimed at improving community infrastructure, a move that stakeholders say could have significant positive impacts for residents in the coming months.",
-      "origin": "ai",
-      "style": "news lede",
-      "model": "GPT-5"
-    },
-    {
-      "id": "seed-news-h2",
-      "text": "A water main burst on Elm Street just after dawn, flooding two basements and turning the morning commute into a slow parade of drivers rubbernecking at the geyser.",
-      "origin": "human",
-      "style": "news lede"
-    },
-    {
-      "id": "seed-news-a2",
-      "text": "Authorities confirmed on Wednesday that the situation remains under control and urged the public to stay informed through official channels as the investigation continues to unfold in the days ahead.",
-      "origin": "ai",
-      "style": "news lede",
-      "model": "Claude 5 Sonnet"
-    },
-    {
-      "id": "seed-recipe-h1",
-      "text": "This is my grandmother's cornbread and she'd be furious I'm putting it online. The trick is you heat the skillet in the oven until it's screaming hot, then the butter hisses when it hits. That's the whole secret.",
-      "origin": "human",
-      "style": "recipe intro"
-    },
-    {
-      "id": "seed-recipe-a1",
-      "text": "Whisk the eggs and sugar together until pale and fluffy, about three minutes, then fold in the sifted flour a third at a time to keep the batter light and airy for the perfect sponge.",
-      "origin": "ai",
-      "style": "recipe intro",
-      "model": "Gemini 3 Pro"
-    },
-    {
-      "id": "seed-recipe-h2",
-      "text": "Okay so I've made this soup like forty times and every time I forget to soak the beans the night before. If you're like me, canned is fine, I won't tell anyone. The rosemary is non-negotiable though.",
-      "origin": "human",
-      "style": "recipe intro"
-    },
-    {
-      "id": "seed-recipe-a2",
-      "text": "This delicious and easy recipe is perfect for busy weeknights. Packed with wholesome ingredients and bursting with flavor, it is sure to become a family favorite that everyone will request again and again.",
-      "origin": "ai",
-      "style": "recipe intro",
-      "model": "GPT-5"
-    },
-    {
-      "id": "seed-social-h1",
-      "text": "just watched a pigeon steal an entire slice of pizza that was bigger than the pigeon. it flew maybe six inches and gave up. respect the ambition though",
-      "origin": "human",
-      "style": "social post"
-    },
-    {
-      "id": "seed-social-a1",
-      "text": "Feeling grateful today! Sometimes the little things in life bring the biggest smiles. Remember to take a moment, breathe, and appreciate all the good around you. You've got this! #blessed #motivation",
-      "origin": "ai",
-      "style": "social post",
-      "model": "Claude 5 Sonnet"
-    },
-    {
-      "id": "seed-email-h1",
-      "text": "Hey — running like ten minutes behind, the trains are being the trains. Order me whatever, I'm not picky, just no olives. See you in a few.",
-      "origin": "human",
-      "style": "email"
-    },
-    {
-      "id": "seed-email-a1",
-      "text": "I hope this message finds you well. I wanted to reach out to follow up on our previous conversation and see if you had any additional questions. Please do not hesitate to contact me at your convenience.",
-      "origin": "ai",
-      "style": "email",
-      "model": "Gemini 3 Pro"
-    },
-    {
-      "id": "seed-travel-h1",
-      "text": "The hostel in Lisbon had a rooftop where an old man played fado every night whether anyone listened or not. I listened. The wine was three euros and tasted like it, but the view didn't.",
-      "origin": "human",
-      "style": "travel note"
-    },
-    {
-      "id": "seed-travel-a1",
-      "text": "Exploring this vibrant city was an unforgettable experience. From the stunning architecture to the warm and welcoming locals, every moment offered a new adventure and a memory that will last a lifetime.",
-      "origin": "ai",
+      "id": "h-travel-twain-1",
+      "text": "The gentle reader will never, never know what a consummate ass he can become until he goes abroad.",
       "style": "travel note",
-      "model": "GPT-5"
+      "source": "Mark Twain, The Innocents Abroad, 1869",
+      "difficulty": 2,
+      "origin": "human"
     },
     {
-      "id": "seed-review-h3",
-      "text": "The headphones are great but the app is a nightmare. Why does adjusting the volume require me to log into an account? I just want music. Docking two stars purely out of spite for that account screen.",
-      "origin": "human",
-      "style": "product review"
+      "id": "a-diary-polar-1",
+      "text": "Camped at last beneath the great ice barrier. The dogs are failing and the biscuit is short, yet I cannot bring myself to despair of the Pole. Tomorrow we shall know whether Providence intends us for glory or for graves.",
+      "style": "diary entry",
+      "model": "Claude Fable 5",
+      "tell": "Too rounded — real polar diaries log depots, mileage and frostbite, not matched pairs like “glory or graves.”",
+      "difficulty": 3,
+      "origin": "ai"
     },
     {
-      "id": "seed-news-a3",
-      "text": "In a landmark development, experts are hailing the announcement as a pivotal step forward. The decision, which comes after months of careful deliberation, is widely expected to reshape the landscape for years to come.",
-      "origin": "ai",
+      "id": "a-diary-fire-1",
+      "text": "Up early, and to the river, where I did see the flames advancing most terribly upon the warehouses. Lord, what confusion of carts and crying children. And so home, much troubled in mind, and to bed.",
+      "style": "diary entry",
+      "model": "Claude Fable 5",
+      "tell": "A greatest-hits reel of Pepys signatures — “up early,” “Lord!,” “and so to bed” — all in four lines.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-travel-lady-1",
+      "text": "The pass was reported impassable, which I took, as usual, for an invitation. My pony disagreed at length and in Icelandic. We reached the hut long after dark, frozen quite through, and I have seldom been happier.",
+      "style": "travel note",
+      "model": "Claude Fable 5",
+      "tell": "Every sentence lands a punchline. Real Victorian travelers let some weather just be weather.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-letter-war-1",
+      "text": "My dearest, the army moves at dawn and I am told the work before us will be warm. Whatever befalls, know that my last thought marching shall be of you and of the little one I have not yet met.",
+      "style": "letter",
+      "model": "Claude Fable 5",
+      "tell": "A movie's idea of an 1861 letter — no regiment, no place, no mud. Only sentiment survived.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-news-period-1",
+      "text": "The city awoke to find the harbor empty, the fleet having slipped its moorings in the night. Officials profess no alarm, but the price of bread had doubled by noon, and the trains leaving town were full.",
       "style": "news lede",
-      "model": "Gemini 3 Pro"
+      "model": "Claude Fable 5",
+      "tell": "Atmosphere over facts — a real wire lede names the city, the fleet, and the date in the first sentence.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-recipe-manual-1",
+      "text": "Let the young housekeeper remember that a dinner is judged not at the table but in the market. Buy honestly, waste nothing, and season with a light hand; guests forgive a plain dish sooner than a pretended one.",
+      "style": "recipe intro",
+      "model": "Claude Fable 5",
+      "tell": "Aphorisms stacked three deep. Period manuals mixed this register with brutally specific prices and weights.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-nature-pine-1",
+      "text": "In the pines I am never lonely, for every needle is a neighbor. The woods do not ask where I have been, and that is their whole hospitality.",
+      "style": "nature note",
+      "model": "Claude Fable 5",
+      "tell": "Aphorism-shaped nature. Muir counts species and miles; this counts metaphors.",
+      "difficulty": 3,
+      "origin": "ai"
+    },
+    {
+      "id": "a-telegram-summit-1",
+      "text": "ARRIVED SUMMIT WEDNESDAY STOP OXYGEN LOW SPIRITS HIGH STOP WIRE MOTHER ALL WELL STOP SEND FUNDS AND MARMALADE.",
+      "style": "telegram",
+      "model": "Claude Fable 5",
+      "tell": "One joke too many — real telegrams economized on wit as strictly as on words.",
+      "difficulty": 3,
+      "origin": "ai"
     }
   ]
 }

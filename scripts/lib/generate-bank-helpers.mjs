@@ -10,24 +10,31 @@ export function isoWeekMonday(date) {
 }
 
 /**
- * Assemble AI-origin passages from the content pool, stamping each with a
- * topical model. In a live pipeline these strings would come from prompting
- * that model; here they come from the pool. Round-robins the topical models
- * so the week's bank features whichever models are current.
+ * Assemble AI-origin passages from the content pool. Every pool entry must
+ * carry its own honest `model` (the model that actually produced the text) —
+ * stamping a passage with a model that didn't write it is a labeling bug, so
+ * a missing model throws rather than being papered over.
  */
-export function buildAiPassages(pool, models) {
-  return pool.map((p, i) => ({ ...p, origin: "ai", model: models[i % models.length] }));
+export function buildAiPassages(pool) {
+  return pool.map((p) => {
+    if (typeof p.model !== "string" || p.model.length === 0) {
+      throw new Error(`ai pool entry ${p.id ?? "(no id)"} is missing its model attribution`);
+    }
+    return { ...p, origin: "ai" };
+  });
 }
 
+/** Human passages pass through with origin stamped; `source` (attribution) rides along. */
 export function buildHumanPassages(pool) {
   return pool.map((p) => ({ ...p, origin: "human" }));
 }
 
 /** Parse CLI args; throws on an unknown flag so the caller can fail loudly. */
 export function parseArgs(argv) {
-  const args = { force: false, week: null };
+  const args = { force: false, week: null, live: false };
   for (const a of argv) {
     if (a === "--force") args.force = true;
+    else if (a === "--live") args.live = true;
     else if (a.startsWith("--week=")) args.week = a.slice("--week=".length);
     else throw new Error(`unknown argument: ${a}`);
   }

@@ -4,15 +4,15 @@ import { About } from "./About";
 
 describe("About", () => {
   it("answers the primary query in the heading and names the current week", () => {
-    render(<About weekOf="2026-07-06" />);
+    render(<About weekOf="2026-07-13" />);
     expect(
-      screen.getByRole("heading", { level: 1, name: /AI or human text game/i }),
+      screen.getByRole("heading", { level: 1, name: /AI-or-human text game/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("2026-07-06")).toBeInTheDocument();
+    expect(screen.getByText("2026-07-13")).toBeInTheDocument();
   });
 
   it("links to the GitHub repo and the portfolio", () => {
-    render(<About weekOf="2026-07-06" />);
+    render(<About weekOf="2026-07-13" />);
     expect(screen.getByRole("link", { name: /View on GitHub/i })).toHaveAttribute(
       "href",
       "https://github.com/ctkrug/spot-the-bot",
@@ -23,9 +23,11 @@ describe("About", () => {
     );
   });
 
-  it("renders the FAQ questions", () => {
-    render(<About weekOf="2026-07-06" />);
+  it("renders the FAQ questions, including the provenance promise", () => {
+    render(<About weekOf="2026-07-13" />);
     expect(screen.getByText("Is this an AI or human text game?")).toBeInTheDocument();
-    expect(screen.getByText("Can you really spot AI generated text?")).toBeInTheDocument();
+    expect(
+      screen.getByText("Are the quotes really from Scott, Twain, and Keats?"),
+    ).toBeInTheDocument();
   });
 });

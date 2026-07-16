@@ -1,9 +1,10 @@
 name: Refresh passage bank
 
-# Regenerates the weekly passage bank every Monday. The offline generator runs
-# with no API key, so this workflow is live today. When a frontier-model call
-# is wired into scripts/generate-bank.mjs (see docs/PIPELINE.md), add the API
-# key as a repository secret and reference it here — the cadence stays weekly.
+# Regenerates the weekly passage bank every Monday. Runs with --live: when the
+# ANTHROPIC_API_KEY repository secret is set, fresh AI passages are generated
+# by the current frontier model and honestly stamped with its name; when the
+# secret is absent the generator warns and falls back to the curated offline
+# pool, so the workflow works either way (see docs/PIPELINE.md).
 
 on:
   schedule:
@@ -30,7 +31,9 @@ jobs:
       # Generate this ISO week's bank. Fails loudly (non-zero exit, no partial
       # write) if fewer than 10 valid passages or fewer than 4 styles.
       - name: Generate bank
-        run: npm run generate-bank
+        run: npm run generate-bank -- --live
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
 
       # Belt-and-suspenders: re-validate whatever landed on disk this run.
       - name: Validate generated banks

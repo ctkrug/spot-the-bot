@@ -33,33 +33,36 @@ describe("buildHumanPassages", () => {
 });
 
 describe("buildAiPassages", () => {
-  const pool = [
-    { id: "a1", text: "x", style: "news lede" },
-    { id: "a2", text: "y", style: "news lede" },
-    { id: "a3", text: "z", style: "news lede" },
-  ];
-
-  it("stamps each passage with origin ai and a model", () => {
-    const out = buildAiPassages(pool, ["Model A"]);
-    expect(out.every((p) => p.origin === "ai" && p.model === "Model A")).toBe(true);
+  it("stamps origin ai and keeps each passage's own honest model attribution", () => {
+    const pool = [
+      { id: "a1", text: "x", style: "news lede", model: "Model A" },
+      { id: "a2", text: "y", style: "news lede", model: "Model B" },
+    ];
+    const out = buildAiPassages(pool);
+    expect(out.map((p) => [p.origin, p.model])).toEqual([
+      ["ai", "Model A"],
+      ["ai", "Model B"],
+    ]);
   });
 
-  it("round-robins models when the pool outnumbers the model list", () => {
-    const out = buildAiPassages(pool, ["Model A", "Model B"]);
-    expect(out.map((p) => p.model)).toEqual(["Model A", "Model B", "Model A"]);
+  it("throws when a pool entry is missing its model attribution", () => {
+    expect(() => buildAiPassages([{ id: "a1", text: "x", style: "news lede" }])).toThrow(
+      /missing its model attribution/,
+    );
   });
 });
 
 describe("parseArgs", () => {
-  it("parses --force and --week", () => {
-    expect(parseArgs(["--force", "--week=2026-07-06"])).toEqual({
+  it("parses --force, --week, and --live", () => {
+    expect(parseArgs(["--force", "--week=2026-07-06", "--live"])).toEqual({
       force: true,
       week: "2026-07-06",
+      live: true,
     });
   });
 
-  it("defaults force to false and week to null", () => {
-    expect(parseArgs([])).toEqual({ force: false, week: null });
+  it("defaults force and live to false and week to null", () => {
+    expect(parseArgs([])).toEqual({ force: false, week: null, live: false });
   });
 
   it("throws on an unrecognized argument", () => {

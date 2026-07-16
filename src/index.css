@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;600&display=swap");
+/* Fonts load via <link> in index.html (preconnect + display=swap) — no
+   render-blocking @import here. */
 
 :root {
   /* Neo-brutalist poster palette — see docs/DESIGN.md */

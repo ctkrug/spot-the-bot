@@ -104,10 +104,26 @@ const RECIPES: Record<SfxName, ToneSpec[]> = {
   stamp: [{ type: "sine", freq: 140, toFreq: 60, duration: 0.16, gain: 0.2 }],
 };
 
-/** Play a named sound effect. No-ops when muted or when audio is unsupported. */
-export function play(name: SfxName): void {
+/**
+ * Play a named sound effect. No-ops when muted or when audio is unsupported.
+ * `pitchStep` shifts the recipe up in semitone-ish steps — the correct-guess
+ * chime ratchets upward as an in-round combo builds.
+ */
+export function play(name: SfxName, pitchStep = 0): void {
   if (muted) return;
-  playTones(RECIPES[name]);
+  const recipe = RECIPES[name];
+  if (pitchStep <= 0) {
+    playTones(recipe);
+    return;
+  }
+  const factor = Math.pow(2, Math.min(pitchStep, 8) / 12);
+  playTones(
+    recipe.map((t) => ({
+      ...t,
+      freq: t.freq * factor,
+      toFreq: t.toFreq === undefined ? undefined : t.toFreq * factor,
+    })),
+  );
 }
 
 /** For tests: reset the shared context and mute flag. */

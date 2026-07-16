@@ -24,6 +24,29 @@
   background: var(--color-bg);
 }
 
+.topbar__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.case-chip {
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  padding: 6px var(--space-2);
+  color: var(--color-surface);
+  background: var(--color-accent);
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius);
+  transform: rotate(-1.5deg);
+  white-space: nowrap;
+}
+
+.case-chip--practice {
+  background: var(--color-accent-support);
+}
+
 .stage {
   flex: 1;
   width: min(680px, 100% - var(--space-5));
@@ -79,7 +102,16 @@
   }
 }
 
-/* ---- Progress strip ----------------------------------------------------- */
+/* ---- Progress strip + combo --------------------------------------------- */
+
+.progress-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  min-height: 26px;
+}
 
 .progress-strip {
   display: flex;
@@ -120,6 +152,19 @@
   }
 }
 
+.combo-badge {
+  position: absolute;
+  right: 0;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 2px var(--space-2);
+  background: var(--color-surface);
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius);
+  transform: rotate(2deg);
+  animation: stamp-pop 260ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
 /* ---- Passage card ------------------------------------------------------- */
 
 .passage-card {
@@ -137,8 +182,19 @@
   animation: card-in 160ms ease-out both;
 }
 
-.passage-card--shake {
+.passage-card--verdict {
+  cursor: pointer;
+}
+
+.passage-card--wrong {
   animation: card-shake 260ms ease-out;
+}
+
+.passage-card--correct {
+  border-color: var(--color-success);
+}
+
+.passage-card--wrong.passage-card--verdict {
   border-color: var(--color-danger);
 }
 
@@ -250,14 +306,94 @@
   }
 }
 
-.passage-card--tilt-human {
-  transform: rotate(-2.5deg) translateX(-6px);
-  transition: transform var(--motion-game);
+/* ---- Evidence strip (per-card verdict reveal) ---------------------------
+   Overlays the card's lower edge as a drawer instead of growing the card:
+   a height change here would resize the page mid-round and make the
+   viewport jump via scroll anchoring. */
+
+.passage-card__evidence {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border-top: 2px dashed var(--color-text-muted);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: var(--space-3) var(--space-5) var(--space-3);
+  animation: evidence-in 220ms ease-out both;
 }
 
-.passage-card--tilt-ai {
-  transform: rotate(2.5deg) translateX(6px);
-  transition: transform var(--motion-game);
+@keyframes evidence-in {
+  0% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.passage-card__ruling {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.truth-tag {
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  color: var(--color-surface);
+  padding: 3px var(--space-2);
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius);
+}
+
+.truth-tag--ai {
+  background: var(--color-accent);
+}
+
+.truth-tag--human {
+  background: var(--color-accent-support);
+}
+
+.passage-card__attribution {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.passage-card__tell {
+  margin: 0;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+  max-width: 60ch;
+}
+
+.passage-card__continue {
+  margin: 0;
+  align-self: flex-end;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  animation: continue-pulse 1400ms ease-in-out infinite;
+}
+
+@keyframes continue-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 /* ---- Verdict buttons ---------------------------------------------------- */
@@ -328,8 +464,9 @@
   cursor: default;
 }
 
-/* ---- Mute toggle & generic buttons ------------------------------------- */
+/* ---- Icon buttons, mute toggle & generic buttons ------------------------ */
 
+.icon-btn,
 .mute-toggle {
   font-size: 1.15rem;
   line-height: 1;
@@ -337,6 +474,7 @@
   height: 44px;
   display: grid;
   place-items: center;
+  color: var(--color-text);
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-text);
   border-radius: var(--radius);
@@ -347,11 +485,13 @@
     box-shadow var(--motion-game);
 }
 
+.icon-btn:hover,
 .mute-toggle:hover {
   transform: translate(-1px, -1px);
   box-shadow: 6px 6px 0 var(--color-text);
 }
 
+.icon-btn:active,
 .mute-toggle:active {
   transform: translate(4px, 4px);
   box-shadow: 0 0 0 var(--color-text);
@@ -427,10 +567,10 @@
 }
 
 .reveal__confetti-piece {
-  --n: 14;
+  --n: 16;
   position: absolute;
   top: -24px;
-  left: calc((100% / var(--n)) * var(--i) + 4%);
+  left: calc((100% / var(--n)) * var(--i) + 3%);
   width: 10px;
   height: 16px;
   background: var(--color-accent);
@@ -478,7 +618,7 @@
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--color-accent);
 }
@@ -497,10 +637,37 @@
   color: var(--color-text-muted);
 }
 
+.reveal__rank {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 4.5vw, 1.9rem);
+  letter-spacing: 0.06em;
+  color: var(--color-surface);
+  background: var(--color-text);
+  align-self: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius);
+  transform: rotate(-1.2deg);
+  animation: stamp-pop 320ms 120ms cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+.reveal__rank-blurb {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.reveal__grid {
+  margin: 0;
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+}
+
 .reveal__nemesis {
   margin: 0 auto;
   max-width: 40ch;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: var(--space-3);
   background: var(--color-surface);
   border: var(--border-width) solid var(--color-text);
@@ -545,60 +712,236 @@
   font-size: 1.5rem;
 }
 
-.reveal__misses {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  text-align: left;
-  max-height: 34vh;
-  overflow-y: auto;
-}
-
-.reveal__miss {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface);
-  border: 2px solid var(--color-text);
-  border-radius: var(--radius);
-}
-
-.reveal__miss-tag {
-  flex: 0 0 auto;
-  font-size: 0.66rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--color-surface);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius);
-  margin-top: 2px;
-}
-
-.reveal__miss-tag--ai {
-  background: var(--color-accent);
-}
-
-.reveal__miss-tag--human {
-  background: var(--color-accent-support);
-}
-
-.reveal__miss-text {
-  font-size: 0.9rem;
-  line-height: 1.45;
-  color: var(--color-text-muted);
-}
-
 .reveal__actions {
   display: flex;
   gap: var(--space-3);
   justify-content: center;
   flex-wrap: wrap;
   margin-top: var(--space-2);
+}
+
+.reveal__countdown {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.reveal__countdown-time {
+  color: var(--color-text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Case file (full dossier on the reveal) ----------------------------- */
+
+.reveal__dossier {
+  margin-top: var(--space-2);
+}
+
+.reveal__dossier-toggle {
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  border-bottom: 2px solid var(--color-accent);
+  color: var(--color-text);
+  padding: var(--space-1) 0;
+  cursor: pointer;
+}
+
+.dossier {
+  list-style: none;
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  text-align: left;
+}
+
+.dossier__item {
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 2px solid var(--color-text);
+  border-left-width: 8px;
+  border-radius: var(--radius);
+}
+
+.dossier__item--correct {
+  border-left-color: var(--color-success);
+}
+
+.dossier__item--wrong {
+  border-left-color: var(--color-accent);
+}
+
+.dossier__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-2);
+}
+
+.dossier__num {
+  font-weight: 600;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.dossier__call {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dossier__text {
+  margin: 0 0 var(--space-2);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.dossier__attribution {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.dossier__tell {
+  margin: var(--space-1) 0 0;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--color-text-muted);
+  line-height: 1.45;
+}
+
+/* ---- Stats panel --------------------------------------------------------- */
+
+.stats-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+  background: rgba(25, 21, 16, 0.55);
+}
+
+.stats-panel {
+  width: min(440px, 100%);
+  max-height: 86vh;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: var(--border-width) solid var(--color-text);
+  border-radius: var(--radius);
+  box-shadow: 8px 8px 0 var(--color-text);
+  padding: var(--space-4);
+  animation: reveal-in 180ms ease-out both;
+}
+
+.stats-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.stats-panel__head h2 {
+  font-size: 1.3rem;
+  letter-spacing: 0.1em;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
+}
+
+.stats-grid > div {
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  padding: var(--space-2);
+  text-align: center;
+}
+
+.stats-grid dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.4rem;
+}
+
+.stats-grid dt {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.stats-panel__subhead {
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-2);
+}
+
+.dist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dist__row {
+  display: grid;
+  grid-template-columns: 1.4em 1fr 2em;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.8rem;
+}
+
+.dist__label {
+  text-align: right;
+  color: var(--color-text-muted);
+}
+
+.dist__bar-track {
+  height: 14px;
+  background: var(--color-surface);
+  border: 2px solid var(--color-text);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.dist__bar {
+  display: block;
+  height: 100%;
+  background: var(--color-accent);
+  min-width: 2px;
+}
+
+.dist__bar[data-empty] {
+  min-width: 0;
+  width: 0 !important;
+}
+
+.dist__count {
+  font-variant-numeric: tabular-nums;
+}
+
+.stats-panel__foot {
+  margin: var(--space-3) 0 0;
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
 }
 
 /* ---- Footer ------------------------------------------------------------- */
@@ -747,14 +1090,22 @@
 /* ---- Phone layout ------------------------------------------------------- */
 
 @media (max-width: 560px) {
+  .topbar {
+    padding: var(--space-2) var(--space-3);
+  }
+
   .stage {
     width: 100%;
-    padding: var(--space-4) var(--space-3) 120px;
+    padding: var(--space-3) var(--space-3) 120px;
     min-height: 0;
   }
 
   .passage-card {
     padding: var(--space-4);
+  }
+
+  .passage-card__evidence {
+    padding: var(--space-3) var(--space-4);
   }
 
   .verdicts {
@@ -778,6 +1129,10 @@
   }
 
   .reveal__tally {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
