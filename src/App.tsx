@@ -9,7 +9,8 @@ import { StatsPanel } from "./components/StatsPanel";
 import { VerdictButtons } from "./components/VerdictButtons";
 import { Wordmark } from "./components/Wordmark";
 import { getCurrentBank } from "./data/currentBank";
-import { dealStratified } from "./game/bank";
+import { actFor } from "./game/acts";
+import { dealStaged } from "./game/bank";
 import { caseNumber, dailySeed, localDateStr } from "./game/daily";
 import { mulberry32 } from "./game/rng";
 import { scoreAnswer, scoreRound, type Answer, type Guess } from "./game/scoring";
@@ -44,7 +45,7 @@ function newSeed(): number {
 }
 
 function dealDaily(dateStr: string) {
-  return dealStratified(bank, mulberry32(dailySeed(dateStr)));
+  return dealStaged(bank, mulberry32(dailySeed(dateStr)));
 }
 
 /** Correctness of each answered passage, for the progress strip. */
@@ -64,13 +65,22 @@ export default function App() {
   const today = useMemo(() => localDateStr(), []);
   const { muted, toggleMute } = useMute();
 
-  // Resume a finished daily from storage so a reload shows the result
-  // instead of allowing a replay; otherwise start today's case fresh.
+  // Resume a finished daily from storage so a reload shows the result instead
+  // of allowing a replay. The stored guesses must match today's dealt passage
+  // ids — a redeploy can reshuffle the day's case, and replaying old guesses
+  // onto new passages would fabricate a result.
   const [mode, setMode] = useState<Mode>("daily");
   const [game, setGame] = useState<GameState>(() => {
     const round = dealDaily(today);
     const stored = loadDailyRound(today);
-    if (stored && stored.guesses.length === round.length && round.length > 0) {
+    if (
+      stored &&
+      round.length > 0 &&
+      stored.guesses.length === round.length &&
+      stored.ids !== undefined &&
+      stored.ids.length === round.length &&
+      stored.ids.every((id, i) => id === round[i].id)
+    ) {
       return { round, guesses: stored.guesses };
     }
     return startGame(round);
@@ -78,6 +88,8 @@ export default function App() {
   const [lastAnswer, setLastAnswer] = useState<Answer | null>(null);
   const [stats, setStats] = useState<Stats>(() => loadStats());
   const [statsOpen, setStatsOpen] = useState(false);
+  // First visit ever → frame the daily as the AIQ test.
+  const firstRun = useRef(loadStats().plays === 0);
   // True while the round being shown was already recorded (resumed daily).
   const recordedRef = useRef(isComplete(game));
   const advanceTimer = useRef<number | null>(null);
@@ -103,10 +115,10 @@ export default function App() {
       return next;
     });
     if (mode === "daily") {
-      saveDailyRound({ date: today, guesses: game.guesses });
+      saveDailyRound({ date: today, guesses: game.guesses, ids: game.round.map((p) => p.id) });
     }
     play("win");
-  }, [result, mode, today, game.guesses]);
+  }, [result, mode, today, game.guesses, game.round]);
 
   /** Dismiss the verdict strip and move to the next card (or the reveal). */
   const advance = useCallback(() => {
@@ -137,7 +149,7 @@ export default function App() {
     recordedRef.current = false;
     setLastAnswer(null);
     setMode("practice");
-    setGame(startGame(dealStratified(bank, mulberry32(newSeed()))));
+    setGame(startGame(dealStaged(bank, mulberry32(newSeed()))));
     // Thunk the fresh round's card into place (the AudioContext is already
     // running by now, unlike the autoplay-blocked first deal on page load).
     play("stamp");
@@ -171,6 +183,7 @@ export default function App() {
 
   const showReveal = complete && !inVerdict && result !== null;
   const caseNo = caseNumber(today);
+  const cardPosition = inVerdict ? index : index + 1;
 
   return (
     <>
@@ -187,15 +200,22 @@ export default function App() {
               aria-label="Statistics"
               onClick={() => setStatsOpen(true)}
             >
-              <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true">
-                <rect x="2" y="10" width="4" height="8" fill="currentColor" />
-                <rect x="8" y="5" width="4" height="13" fill="currentColor" />
-                <rect x="14" y="2" width="4" height="16" fill="currentColor" />
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+                <rect x="2" y="10" width="4" height="8" rx="1" fill="currentColor" />
+                <rect x="8" y="5" width="4" height="13" rx="1" fill="currentColor" />
+                <rect x="14" y="2" width="4" height="16" rx="1" fill="currentColor" />
               </svg>
             </button>
             <MuteToggle muted={muted} onToggle={toggleMute} />
           </div>
         </header>
+
+        {firstRun.current && !showReveal && (
+          <p className="test-banner">
+            <strong>THE AIQ TEST</strong> — ten exhibits, from obvious slop to expert fakes.
+            Find out how sharp your AI radar really is.
+          </p>
+        )}
 
         {showReveal ? (
           <Reveal
@@ -216,8 +236,9 @@ export default function App() {
             <PassageCard
               key={inVerdict ? `v-${lastAnswer.passage.id}` : passage!.id}
               passage={inVerdict ? lastAnswer.passage : passage!}
-              position={inVerdict ? index : index + 1}
+              position={cardPosition}
               total={game.round.length}
+              act={actFor(cardPosition - 1, game.round.length)}
               answer={lastAnswer}
               onDismiss={advance}
             />

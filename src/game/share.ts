@@ -1,4 +1,4 @@
-import { rankFor } from "./rank";
+import { aiqFor, classify, topPercent } from "./aiq";
 import type { RoundResult } from "./scoring";
 
 export const SHARE_URL = "https://apps.charliekrug.com/spot-the-bot/";
@@ -22,14 +22,15 @@ export function emojiGrid(result: RoundResult): string {
 
 /**
  * Build the shareable score card. Spoiler-free by design: the grid shows
- * which positions were right or wrong, never what any passage was. Naming
- * the nemesis model is the hook; the URL is the loop.
+ * which positions were right or wrong, never what any passage was. The AIQ
+ * number is the flex; the URL is the loop.
  */
 export function buildShareText(result: RoundResult, ctx: ShareContext): string {
+  const aiq = aiqFor(result.score, result.total);
   const lines: string[] = [];
   lines.push(ctx.caseNumber !== null ? `Spot the Bot — Case #${ctx.caseNumber}` : "Spot the Bot — practice round");
+  lines.push(`AIQ ${aiq} 🧠 (${topPercent(aiq)}) — ${classify(aiq).title.toUpperCase()}`);
   lines.push(`${emojiGrid(result)} ${result.score}/${result.total}`);
-  lines.push(rankFor(result.score, result.total).title.toUpperCase());
 
   if (result.nemesis) {
     lines.push(`Fooled ${result.nemesis.count}× by ${result.nemesis.model} 🤖`);

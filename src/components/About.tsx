@@ -16,15 +16,18 @@ export function About({ weekOf }: AboutProps) {
     <section className="about" aria-labelledby="about-title">
       <div className="about__inner">
         <h1 id="about-title" className="about__title">
-          A daily AI-or-human text game with receipts
+          The daily AI-or-human test that scores your AIQ
         </h1>
         <p className="about__lede">
           Spot the Bot deals you a fresh Daily Case: ten short passages, one verdict each —
-          human or AI. No login, no install, about two minutes. What makes it different is
-          that the labels are real on both sides: every human passage is genuine, attributed
-          writing (Scott&rsquo;s Antarctic diary, Twain&rsquo;s travel notes, a 1924 sports
-          lede), and every AI passage was actually written by the model it names. After each
-          guess you see who really wrote it and the one-line tell that gives it away.
+          human or AI. It starts almost insultingly easy (if you can spot an em dash and a
+          &ldquo;delve,&rdquo; you&rsquo;ll feel like a genius) and climbs to expert-tier
+          fakes; the final exhibit is always the machine&rsquo;s best work. Your score
+          becomes an <strong>AIQ</strong> on a real IQ curve — 100 is dead average, 160 is
+          perfect detection. And the labels are real on both sides: every human passage is
+          genuine, attributed writing (Scott&rsquo;s Antarctic diary, Darwin&rsquo;s
+          crankiest letter, a 1924 sports lede), and every AI passage was actually written
+          by the model it names.
         </p>
 
         <h2 className="about__heading">The Daily Case</h2>

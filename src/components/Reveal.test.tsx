@@ -36,11 +36,12 @@ function renderReveal(overrides: Partial<Parameters<typeof Reveal>[0]> = {}) {
 }
 
 describe("Reveal", () => {
-  it("names the nemesis model and shows the rank", () => {
+  it("leads with the AIQ, names the nemesis model, and shows the classification", () => {
     renderReveal();
+    // 0/2 → AIQ 40, the bottom of the scale.
+    expect(document.getElementById("reveal-aiq")).toHaveTextContent("40");
+    expect(screen.getByText("CERTIFIED MARK")).toBeInTheDocument();
     expect(screen.getByText(/today\./)).toHaveTextContent("Claude Fable 5");
-    // 0/2 → the bottom rank.
-    expect(screen.getByText("BOTFISHED")).toBeInTheDocument();
     expect(screen.getByText(/CASE №5 — CLOSED/)).toBeInTheDocument();
   });
 
@@ -50,7 +51,7 @@ describe("Reveal", () => {
     renderReveal();
 
     await act(async () => {
-      screen.getByRole("button", { name: /Share result/ }).click();
+      screen.getByRole("button", { name: /Share your AIQ/ }).click();
     });
 
     expect(writeText).toHaveBeenCalledOnce();
@@ -66,10 +67,10 @@ describe("Reveal", () => {
     renderReveal();
 
     await act(async () => {
-      screen.getByRole("button", { name: /Share result/ }).click();
+      screen.getByRole("button", { name: /Share your AIQ/ }).click();
     });
 
-    expect(screen.getByRole("button", { name: /Share result/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Share your AIQ/ })).toBeInTheDocument();
   });
 
   it("offers practice after a daily and invokes the callback", () => {

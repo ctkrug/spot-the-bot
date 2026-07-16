@@ -24,7 +24,7 @@ const aiPassage: Passage = {
 describe("PassageCard", () => {
   it("renders no stamp or evidence before a verdict is submitted", () => {
     render(
-      <PassageCard passage={passage} position={1} total={10} answer={null} onDismiss={() => {}} />,
+      <PassageCard passage={passage} position={1} total={10} act="WARM-UP" answer={null} onDismiss={() => {}} />,
     );
     expect(screen.queryByText("CORRECT")).not.toBeInTheDocument();
     expect(screen.queryByText("WRONG")).not.toBeInTheDocument();
@@ -38,6 +38,7 @@ describe("PassageCard", () => {
         passage={passage}
         position={1}
         total={10}
+        act="WARM-UP"
         answer={scoreAnswer(passage, "human")}
         onDismiss={() => {}}
       />,
@@ -54,6 +55,7 @@ describe("PassageCard", () => {
         passage={aiPassage}
         position={2}
         total={10}
+        act="WARM-UP"
         answer={scoreAnswer(aiPassage, "human")}
         onDismiss={() => {}}
       />,
@@ -71,6 +73,7 @@ describe("PassageCard", () => {
         passage={aiPassage}
         position={2}
         total={10}
+        act="WARM-UP"
         answer={scoreAnswer(aiPassage, "ai")}
         onDismiss={onDismiss}
       />,

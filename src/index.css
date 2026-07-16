@@ -2,19 +2,23 @@
    render-blocking @import here. */
 
 :root {
-  /* Neo-brutalist poster palette — see docs/DESIGN.md */
-  --color-bg: #f5f1e8;
-  --color-surface: #ffffff;
-  --color-surface-alt: #e8e2d4;
-  --color-text: #191510;
-  --color-text-muted: #6b6355;
-  --color-accent: #ff4b3e;
-  --color-accent-support: #2d5bff;
-  --color-success: #2baa6e;
-  --color-danger: #ff4b3e;
+  /* Editorial paper-and-ink palette — warm, literary, softer than v2's
+     poster look. Accents: indigo = human, vermilion = AI, gold = AIQ. */
+  --color-bg: #f6f0e2;
+  --color-surface: #fffdf5;
+  --color-surface-alt: #ece4d2;
+  --color-text: #241d13;
+  --color-text-muted: #7c7260;
+  --color-accent: #d94f2b;
+  --color-accent-support: #3b4ec9;
+  --color-success: #3a9b6e;
+  --color-danger: #d94f2b;
+  --color-gold: #a97e24;
+  --grain: rgba(36, 29, 19, 0.07);
 
   --font-display: "Space Grotesk", system-ui, sans-serif;
   --font-ui: "IBM Plex Mono", ui-monospace, monospace;
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
 
   --space-1: 4px;
   --space-2: 8px;
@@ -23,22 +27,33 @@
   --space-5: 32px;
   --space-6: 48px;
 
-  --radius: 4px;
-  --border-width: 3px;
-  --shadow-hard: 4px 4px 0 var(--color-text);
+  --radius: 10px;
+  --radius-lg: 16px;
+  --border-width: 2px;
+  --shadow-soft: 0 1px 2px rgba(36, 29, 19, 0.05), 0 10px 28px rgba(36, 29, 19, 0.1);
+  --shadow-lift: 0 2px 4px rgba(36, 29, 19, 0.06), 0 16px 40px rgba(36, 29, 19, 0.14);
+  --shadow-press: 0 1px 1px rgba(36, 29, 19, 0.08);
 
   --motion-ui: 180ms ease-out;
-  --motion-game: 100ms ease-out;
+  --motion-game: 110ms ease-out;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1c1812;
-    --color-surface: #262019;
-    --color-surface-alt: #302921;
-    --color-text: #f5f1e8;
-    --color-text-muted: #b8ae9c;
-    --shadow-hard: 4px 4px 0 #0c0a07;
+    --color-bg: #17130e;
+    --color-surface: #211b14;
+    --color-surface-alt: #2c251c;
+    --color-text: #f2ead9;
+    --color-text-muted: #a99c86;
+    --color-accent: #ff7e52;
+    --color-accent-support: #8b9aff;
+    --color-success: #4dbd8a;
+    --color-danger: #ff7e52;
+    --color-gold: #e4b95b;
+    --grain: rgba(242, 234, 217, 0.05);
+    --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.4);
+    --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 40px rgba(0, 0, 0, 0.5);
+    --shadow-press: 0 1px 1px rgba(0, 0, 0, 0.4);
   }
 }
 

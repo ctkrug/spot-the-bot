@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { aiqFor } from "../game/aiq";
 import type { Stats } from "../game/stats";
 
 interface StatsPanelProps {
@@ -18,7 +19,9 @@ export function StatsPanel({ stats, onClose }: StatsPanelProps) {
 
   const maxBucket = Math.max(1, ...stats.dist);
   const totalScored = stats.dist.reduce((sum, n, score) => sum + n * score, 0);
-  const avg = stats.plays > 0 ? (totalScored / stats.plays).toFixed(1) : "—";
+  const bestAiq = stats.plays > 0 ? aiqFor(stats.bestScore, 10) : null;
+  const avgAiq =
+    stats.plays > 0 ? Math.round(100 + (totalScored / stats.plays / 10 - 0.5) * 120) : null;
 
   return (
     <div className="stats-overlay" role="presentation" onClick={onClose}>
@@ -42,12 +45,12 @@ export function StatsPanel({ stats, onClose }: StatsPanelProps) {
             <dt>rounds</dt>
           </div>
           <div>
-            <dd>{avg}</dd>
-            <dt>avg score</dt>
+            <dd>{avgAiq ?? "—"}</dd>
+            <dt>avg AIQ</dt>
           </div>
           <div>
-            <dd>{stats.bestScore}</dd>
-            <dt>best</dt>
+            <dd>{bestAiq ?? "—"}</dd>
+            <dt>best AIQ</dt>
           </div>
           <div>
             <dd>×{stats.bestCombo}</dd>

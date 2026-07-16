@@ -2,6 +2,30 @@
   "weekOf": "2026-07-06",
   "passages": [
     {
+      "id": "h-nature-thoreau-1",
+      "text": "I went to the woods because I wished to live deliberately, to front only the essential facts of life, and see if I could not learn what it had to teach, and not, when I came to die, discover that I had not lived.",
+      "style": "nature note",
+      "source": "Henry David Thoreau, Walden, 1854",
+      "difficulty": 1,
+      "origin": "human"
+    },
+    {
+      "id": "h-letter-darwin-1",
+      "text": "But I am very poorly today and very stupid and hate everybody and everything.",
+      "style": "letter",
+      "source": "Charles Darwin to Charles Lyell, 1861",
+      "difficulty": 1,
+      "origin": "human"
+    },
+    {
+      "id": "h-overheard-johnson-1",
+      "text": "Depend upon it, sir, when a man knows he is to be hanged in a fortnight, it concentrates his mind wonderfully.",
+      "style": "overheard",
+      "source": "Samuel Johnson, quoted in Boswell's Life of Johnson, 1777",
+      "difficulty": 1,
+      "origin": "human"
+    },
+    {
       "id": "h-diary-scott-1",
       "text": "Great God! this is an awful place and terrible enough for us to have laboured to it without the reward of priority.",
       "style": "diary entry",
@@ -18,14 +42,6 @@
       "origin": "human"
     },
     {
-      "id": "h-diary-pepys-1",
-      "text": "We saw the fire grow in a most horrid malicious bloody flame, not like the fine flame of an ordinary fire. It made me weep to see it.",
-      "style": "diary entry",
-      "source": "Samuel Pepys on the Great Fire of London, 2 September 1666 (adapted)",
-      "difficulty": 3,
-      "origin": "human"
-    },
-    {
       "id": "h-diary-darwin-1",
       "text": "Delight itself, however, is a weak term to express the feelings of a naturalist who, for the first time, has wandered by himself in a Brazilian forest.",
       "style": "diary entry",
@@ -34,19 +50,11 @@
       "origin": "human"
     },
     {
-      "id": "h-letter-keats-1",
-      "text": "I mean Negative Capability, that is, when a man is capable of being in uncertainties, mysteries, doubts, without any irritable reaching after fact and reason.",
-      "style": "letter",
-      "source": "John Keats to his brothers, 22 December 1817",
-      "difficulty": 2,
-      "origin": "human"
-    },
-    {
-      "id": "h-letter-adams-1",
-      "text": "I desire you would remember the ladies, and be more generous and favourable to them than your ancestors. Do not put such unlimited power into the hands of the husbands. Remember, all men would be tyrants if they could.",
-      "style": "letter",
-      "source": "Abigail Adams to John Adams, 31 March 1776",
-      "difficulty": 2,
+      "id": "h-diary-pepys-1",
+      "text": "We saw the fire grow in a most horrid malicious bloody flame, not like the fine flame of an ordinary fire. It made me weep to see it.",
+      "style": "diary entry",
+      "source": "Samuel Pepys on the Great Fire of London, 2 September 1666 (adapted)",
+      "difficulty": 3,
       "origin": "human"
     },
     {
@@ -58,12 +66,67 @@
       "origin": "human"
     },
     {
-      "id": "h-travel-twain-1",
-      "text": "The gentle reader will never, never know what a consummate ass he can become until he goes abroad.",
-      "style": "travel note",
-      "source": "Mark Twain, The Innocents Abroad, 1869",
+      "id": "a-easy-email-1",
+      "text": "I hope this email finds you well! I just wanted to circle back and touch base regarding our shared synergies. Let's not just think outside the box — let's redefine it. Please don't hesitate to reach out!",
+      "style": "email",
+      "model": "Claude Fable 5",
+      "tell": "It found you well, it circled back, and it touched base — the full corporate séance in four sentences.",
+      "difficulty": 1,
+      "origin": "ai"
+    },
+    {
+      "id": "a-easy-diary-1",
+      "text": "Today I delved into the rich tapestry of my morning routine. It wasn't just coffee — it was a journey. In today's fast-paced world, taking a moment to truly pause is nothing short of a game-changer.",
+      "style": "diary entry",
+      "model": "Claude Fable 5",
+      "tell": "'Delve' and 'rich tapestry' in one entry — the machine showed its whole hand.",
+      "difficulty": 1,
+      "origin": "ai"
+    },
+    {
+      "id": "a-easy-social-1",
+      "text": "Unpopular opinion: kindness is free. ✨ Let that sink in. It's not just a mindset — it's a movement. Who's with me? 💪 #Blessed #GrowthMindset",
+      "style": "social post",
+      "model": "Claude Fable 5",
+      "tell": "Inspiration-bot bingo: a sparkle emoji, 'let that sink in', and a hashtag prayer.",
+      "difficulty": 1,
+      "origin": "ai"
+    },
+    {
+      "id": "a-easy-social-2",
+      "text": "Success isn't a destination — it's a journey. And the journey? It's not about the miles — it's about the moments. Read that again.",
+      "style": "social post",
+      "model": "Claude Fable 5",
+      "tell": "Em dashes wholesale, plus 'Read that again' — the engagement-bait sign-off.",
+      "difficulty": 1,
+      "origin": "ai"
+    },
+    {
+      "id": "a-recipe-weeknight-1",
+      "text": "Weeknight pasta for when the day won. Fifteen minutes, one pan, and the parmesan rind you forgot you saved doing most of the heavy lifting.",
+      "style": "recipe intro",
+      "model": "Claude Fable 5",
+      "tell": "Cozy and competent, but engineered — 'for when the day won' is a headline, not a memory.",
       "difficulty": 2,
-      "origin": "human"
+      "origin": "ai"
+    },
+    {
+      "id": "a-news-library-1",
+      "text": "The library's roof fund reached its goal Tuesday after an anonymous donor covered the final $4,200, ending a drive that began with a bake sale in March.",
+      "style": "news lede",
+      "model": "Claude Fable 5",
+      "tell": "Almost perfect wire copy — but every number resolves too neatly, like a story writing itself backward.",
+      "difficulty": 2,
+      "origin": "ai"
+    },
+    {
+      "id": "a-letter-seeds-1",
+      "text": "Dear Sam — the seeds you sent came up in rows so straight I suspect them of ambition. Write when the harvest lets you.",
+      "style": "letter",
+      "model": "Claude Fable 5",
+      "tell": "Charming, but the wit is load-bearing — real farm letters spend more words on weather and debt.",
+      "difficulty": 2,
+      "origin": "ai"
     },
     {
       "id": "a-diary-polar-1",
@@ -89,51 +152,6 @@
       "style": "travel note",
       "model": "Claude Fable 5",
       "tell": "Every sentence lands a punchline. Real Victorian travelers let some weather just be weather.",
-      "difficulty": 3,
-      "origin": "ai"
-    },
-    {
-      "id": "a-letter-war-1",
-      "text": "My dearest, the army moves at dawn and I am told the work before us will be warm. Whatever befalls, know that my last thought marching shall be of you and of the little one I have not yet met.",
-      "style": "letter",
-      "model": "Claude Fable 5",
-      "tell": "A movie's idea of an 1861 letter — no regiment, no place, no mud. Only sentiment survived.",
-      "difficulty": 3,
-      "origin": "ai"
-    },
-    {
-      "id": "a-news-period-1",
-      "text": "The city awoke to find the harbor empty, the fleet having slipped its moorings in the night. Officials profess no alarm, but the price of bread had doubled by noon, and the trains leaving town were full.",
-      "style": "news lede",
-      "model": "Claude Fable 5",
-      "tell": "Atmosphere over facts — a real wire lede names the city, the fleet, and the date in the first sentence.",
-      "difficulty": 3,
-      "origin": "ai"
-    },
-    {
-      "id": "a-recipe-manual-1",
-      "text": "Let the young housekeeper remember that a dinner is judged not at the table but in the market. Buy honestly, waste nothing, and season with a light hand; guests forgive a plain dish sooner than a pretended one.",
-      "style": "recipe intro",
-      "model": "Claude Fable 5",
-      "tell": "Aphorisms stacked three deep. Period manuals mixed this register with brutally specific prices and weights.",
-      "difficulty": 3,
-      "origin": "ai"
-    },
-    {
-      "id": "a-nature-pine-1",
-      "text": "In the pines I am never lonely, for every needle is a neighbor. The woods do not ask where I have been, and that is their whole hospitality.",
-      "style": "nature note",
-      "model": "Claude Fable 5",
-      "tell": "Aphorism-shaped nature. Muir counts species and miles; this counts metaphors.",
-      "difficulty": 3,
-      "origin": "ai"
-    },
-    {
-      "id": "a-telegram-summit-1",
-      "text": "ARRIVED SUMMIT WEDNESDAY STOP OXYGEN LOW SPIRITS HIGH STOP WIRE MOTHER ALL WELL STOP SEND FUNDS AND MARMALADE.",
-      "style": "telegram",
-      "model": "Claude Fable 5",
-      "tell": "One joke too many — real telegrams economized on wit as strictly as on words.",
       "difficulty": 3,
       "origin": "ai"
     }

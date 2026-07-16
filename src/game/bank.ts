@@ -75,28 +75,76 @@ export function dealRound(
   return shuffle(bank.passages, rng).slice(0, take);
 }
 
+type OriginKey = "h" | "a";
+type Tier = 1 | 2 | 3;
+type Pref = [OriginKey, Tier];
+
+/** Preference chain per slot kind: first non-empty bucket wins. */
+const CHAINS: Record<string, Pref[]> = {
+  a1: [["a", 1], ["a", 2], ["h", 1], ["a", 3], ["h", 2], ["h", 3]],
+  h1: [["h", 1], ["h", 2], ["a", 1], ["h", 3], ["a", 2], ["a", 3]],
+  a2: [["a", 2], ["a", 1], ["a", 3], ["h", 2], ["h", 1], ["h", 3]],
+  h2: [["h", 2], ["h", 1], ["h", 3], ["a", 2], ["a", 1], ["a", 3]],
+  a3: [["a", 3], ["a", 2], ["h", 3], ["h", 2], ["a", 1], ["h", 1]],
+  h3: [["h", 3], ["h", 2], ["a", 3], ["a", 2], ["h", 1], ["a", 1]],
+  /** The closer: the machine's best work, whatever it takes. */
+  finale: [["a", 3], ["a", 2], ["a", 1], ["h", 3], ["h", 2], ["h", 1]],
+};
+
 /**
- * Deal a stratified round: as close to half human / half AI as the bank
- * allows, then shuffled together. A pure-shuffle deal can hand out 8 AI and
- * 2 humans, which makes the round feel rigged; stratifying keeps every round
- * a fair lineup. Deterministic for a given bank + rng seed, which is what
- * makes the shared Daily Case possible.
+ * Deal a staged round — the difficulty arc IS the game:
+ *
+ *   1–3  warm-up: mostly the obvious slop tier (plus one loud human voice)
+ *   4–7  field work: the plausible middle, half and half
+ *   8–9  expert tier: the hard fakes and the hard humans
+ *   10   the finale: always the machine's most human-sounding work
+ *
+ * Every group is shuffled internally so positions don't leak answers within
+ * a stage. Deterministic for a given bank + rng seed (the shared Daily Case).
+ * Buckets degrade gracefully via preference chains when a tier runs short.
  */
-export function dealStratified(
+export function dealStaged(
   bank: PassageBank,
   rng: Rng,
   size: number = ROUND_SIZE,
 ): Passage[] {
-  const humans = shuffle(bank.passages.filter((p) => p.origin === "human"), rng);
-  const ais = shuffle(bank.passages.filter((p) => p.origin === "ai"), rng);
-  const take = Math.max(0, Math.min(size, humans.length + ais.length));
-  const wantHuman = Math.min(humans.length, Math.ceil(take / 2));
-  const wantAi = Math.min(ais.length, take - wantHuman);
-  // If one side ran short, backfill from the other so the round stays full.
-  const extraHuman = Math.min(humans.length - wantHuman, take - wantHuman - wantAi);
-  const picked = [
-    ...humans.slice(0, wantHuman + extraHuman),
-    ...ais.slice(0, wantAi),
-  ];
-  return shuffle(picked, rng);
+  const pools: Record<OriginKey, Record<Tier, Passage[]>> = {
+    h: { 1: [], 2: [], 3: [] },
+    a: { 1: [], 2: [], 3: [] },
+  };
+  for (const p of bank.passages) {
+    const tier = (p.difficulty ?? 2) as Tier;
+    pools[p.origin === "human" ? "h" : "a"][tier].push(p);
+  }
+  for (const o of ["h", "a"] as OriginKey[]) {
+    for (const t of [1, 2, 3] as Tier[]) pools[o][t] = shuffle(pools[o][t], rng);
+  }
+
+  const pop = (chain: Pref[]): Passage | null => {
+    for (const [o, t] of chain) {
+      const bucket = pools[o][t];
+      if (bucket.length > 0) return bucket.pop()!;
+    }
+    return null;
+  };
+  const group = (kinds: string[]): Passage[] =>
+    shuffle(kinds.map((k) => pop(CHAINS[k])).filter((p): p is Passage => p !== null), rng);
+
+  const openers = group(["a1", "a1", "h1"]);
+  const mid = group(["a2", "a2", "h2", "h2"]);
+  const expert = group(["h3", rng() < 0.5 ? "a3" : "h3"]);
+  const finale = pop(CHAINS.finale);
+
+  const round = [...openers, ...mid, ...expert];
+  // Top up from whatever's left if the bank ran short of the plan.
+  const want = Math.max(0, Math.min(size, bank.passages.length)) - (finale ? 1 : 0);
+  if (round.length < want) {
+    const leftovers = shuffle(
+      ([1, 2, 3] as Tier[]).flatMap((t) => [...pools.h[t], ...pools.a[t]]),
+      rng,
+    );
+    round.push(...leftovers.slice(0, want - round.length));
+  }
+  const trimmed = round.slice(0, want);
+  return finale ? [...trimmed, finale] : trimmed;
 }

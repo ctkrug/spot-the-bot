@@ -26,11 +26,20 @@ describe("emojiGrid", () => {
 describe("buildShareText", () => {
   const result = scoreRound([ai("a1"), ai("a2"), human("h1")], ["human", "human", "human"]);
 
-  it("labels a daily with its case number and includes grid, rank, and URL", () => {
+  it("labels a daily with its case number and includes AIQ, grid, and URL", () => {
     const text = buildShareText(result, { caseNumber: 5, dailyStreak: 1 });
     expect(text).toContain("Case #5");
+    // 1/3 correct → AIQ 100 + (1/3 - 0.5)*120 = 80.
+    expect(text).toContain("AIQ 80 🧠");
     expect(text).toContain("🟥🟥🟩 1/3");
     expect(text).toContain(SHARE_URL);
+  });
+
+  it("flexes a perfect AIQ with its classification", () => {
+    const perfect = scoreRound([ai("a1"), human("h1")], ["ai", "human"]);
+    const text = buildShareText(perfect, { caseNumber: 2, dailyStreak: 0 });
+    expect(text).toContain("AIQ 160 🧠");
+    expect(text).toContain("CHIEF TURING EXAMINER");
   });
 
   it("names the nemesis model when one fooled the player twice", () => {

@@ -47,11 +47,12 @@ describe("App", () => {
     expect(screen.queryByText(/tap to continue/)).not.toBeInTheDocument();
   });
 
-  it("reaches the reveal after ten verdicts and can start a practice round", () => {
+  it("reaches the AIQ reveal after ten verdicts and can start a practice round", () => {
     render(<App />);
     for (let i = 0; i < 10; i++) verdict("HUMAN");
-    const reveal = document.getElementById("reveal-score");
-    expect(reveal?.textContent).toMatch(/\/\s*10/);
+    const aiq = document.getElementById("reveal-aiq");
+    expect(aiq?.textContent).toMatch(/^\d{2,3}$/);
+    expect(screen.getByText(/\/10/)).toBeInTheDocument();
     const practice = screen.getByRole("button", { name: /Play a practice round/ });
 
     act(() => practice.click());
@@ -62,13 +63,20 @@ describe("App", () => {
   it("persists the finished daily so a remount shows the reveal, not a replay", () => {
     const first = render(<App />);
     for (let i = 0; i < 10; i++) verdict("AI");
-    expect(document.getElementById("reveal-score")).toBeInTheDocument();
+    expect(document.getElementById("reveal-aiq")).toBeInTheDocument();
     first.unmount();
 
     render(<App />);
     // Straight to the closed case — no fresh round.
-    expect(document.getElementById("reveal-score")).toBeInTheDocument();
+    expect(document.getElementById("reveal-aiq")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^HUMAN/ })).not.toBeInTheDocument();
+  });
+
+  it("frames the first-ever visit as the AIQ test and stages the difficulty arc", () => {
+    render(<App />);
+    expect(screen.getByText(/THE AIQ TEST/)).toBeInTheDocument();
+    // The opening act is labeled.
+    expect(screen.getByText("WARM-UP")).toBeInTheDocument();
   });
 
   it("thunks the stamp sound when a practice round deals", () => {

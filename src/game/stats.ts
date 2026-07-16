@@ -126,6 +126,10 @@ const KEY_DAILY = "stb.dailyRound.v1";
 export interface StoredDailyRound {
   date: string;
   guesses: ("human" | "ai")[];
+  /** Passage ids the guesses were cast against — a redeploy can change the
+   * day's deal, and replaying stored guesses onto different passages would
+   * fabricate a result. Older records without ids stay accepted. */
+  ids?: string[];
 }
 
 export function loadDailyRound(date: string): StoredDailyRound | null {
@@ -135,6 +139,7 @@ export function loadDailyRound(date: string): StoredDailyRound | null {
     const parsed = JSON.parse(raw) as StoredDailyRound;
     if (parsed.date !== date || !Array.isArray(parsed.guesses)) return null;
     if (!parsed.guesses.every((g) => g === "human" || g === "ai")) return null;
+    if (parsed.ids !== undefined && !Array.isArray(parsed.ids)) return null;
     return parsed;
   } catch {
     return null;

@@ -1,6 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
+import { aiqFor, classify, topPercent } from "../game/aiq";
 import { formatCountdown, msUntilNextCase } from "../game/daily";
-import { rankFor } from "../game/rank";
 import type { RoundResult } from "../game/scoring";
 import { buildShareText, emojiGrid } from "../game/share";
 import type { Stats } from "../game/stats";
@@ -32,11 +32,36 @@ function NextCaseCountdown() {
   return <strong className="reveal__countdown-time">{formatCountdown(ms)}</strong>;
 }
 
+/** IQ-style scale from 40 to 160 with the player's needle. */
+function AiqGauge({ aiq }: { aiq: number }) {
+  const min = 40;
+  const max = 160;
+  const clamped = Math.max(min, Math.min(max, aiq));
+  const x = (v: number) => 24 + ((v - min) / (max - min)) * 272;
+  const ticks = [40, 70, 100, 130, 160];
+  return (
+    <svg viewBox="0 0 320 64" className="aiq-gauge" aria-hidden="true">
+      <line x1={x(min)} y1="26" x2={x(max)} y2="26" className="aiq-gauge__track" />
+      <line x1={x(min)} y1="26" x2={x(clamped)} y2="26" className="aiq-gauge__fill" />
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={x(t)} y1="20" x2={x(t)} y2="32" className="aiq-gauge__tick" />
+          <text x={x(t)} y="50" textAnchor="middle" className="aiq-gauge__label">
+            {t}
+          </text>
+        </g>
+      ))}
+      <circle cx={x(clamped)} cy="26" r="8" className="aiq-gauge__needle" />
+    </svg>
+  );
+}
+
 /** Full-bleed reveal that replaces the stage — the score moment gets the screen. */
 export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealProps) {
   const [copied, setCopied] = useState(false);
   const [dossierOpen, setDossierOpen] = useState(false);
-  const rank = rankFor(result.score, result.total);
+  const aiq = aiqFor(result.score, result.total);
+  const cls = classify(aiq);
   const celebrate = result.total > 0 && result.score / result.total >= 0.8;
 
   const shareText = buildShareText(result, {
@@ -64,7 +89,7 @@ export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealPr
   }
 
   return (
-    <section className="reveal" aria-labelledby="reveal-score">
+    <section className="reveal" aria-labelledby="reveal-aiq">
       {celebrate && (
         <div className="reveal__confetti" aria-hidden="true">
           {Array.from({ length: CONFETTI_PIECES }, (_, i) => (
@@ -77,7 +102,8 @@ export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealPr
         </div>
       )}
       <p className="sr-only" role="status" aria-live="assertive">
-        Final score {result.score} out of {result.total}. Rank: {rank.title}.
+        Your AIQ is {aiq} — {cls.title}, {topPercent(aiq)}. Score {result.score} out of{" "}
+        {result.total}.
         {result.nemesis
           ? ` ${result.nemesis.model} fooled you ${result.nemesis.count} times.`
           : ""}
@@ -86,15 +112,18 @@ export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealPr
       <p className="reveal__verdict">
         {mode === "daily" ? `CASE №${caseNo} — CLOSED` : "PRACTICE ROUND — CLOSED"}
       </p>
-      <h2 id="reveal-score" className="reveal__score">
-        <span className="reveal__score-num">{result.score}</span>
-        <span className="reveal__score-den">/ {result.total}</span>
+
+      <p className="reveal__aiq-label">YOUR AIQ</p>
+      <h2 id="reveal-aiq" className="reveal__aiq">
+        {aiq}
       </h2>
-      <p className="reveal__rank">{rank.title.toUpperCase()}</p>
-      <p className="reveal__rank-blurb">{rank.blurb}</p>
+      <p className="reveal__percentile">{topPercent(aiq)} of humans tested*</p>
+      <AiqGauge aiq={aiq} />
+      <p className="reveal__rank">{cls.title.toUpperCase()}</p>
+      <p className="reveal__rank-blurb">{cls.blurb}</p>
 
       <p className="reveal__grid" aria-hidden="true">
-        {emojiGrid(result)}
+        {emojiGrid(result)} <span className="reveal__grid-score">{result.score}/{result.total}</span>
       </p>
 
       {result.nemesis ? (
@@ -131,7 +160,7 @@ export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealPr
 
       <div className="reveal__actions">
         <button type="button" className="btn btn--primary" onClick={handleShare}>
-          {copied ? "Copied!" : "Share result"}
+          {copied ? "Copied!" : "Share your AIQ"}
         </button>
         <button type="button" className="btn btn--ghost" onClick={onPlayPractice}>
           {mode === "daily" ? "Play a practice round" : "Play again"}
@@ -175,6 +204,8 @@ export function Reveal({ result, mode, caseNo, stats, onPlayPractice }: RevealPr
           </ul>
         )}
       </div>
+
+      <p className="reveal__footnote">*n = {result.total} exhibits. Not peer reviewed.</p>
     </section>
   );
 }

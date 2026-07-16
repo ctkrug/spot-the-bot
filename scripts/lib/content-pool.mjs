@@ -138,8 +138,137 @@ export const CONTENT_POOL = {
       source: "Mark Twain on his new typewriter, 1874 (adapted)",
       difficulty: 3,
     },
+    // ——— Easy tier: humans with unmistakable voice — petty, specific, alive.
+    // The warm-up contrast to the em-dash slop. ———
+    {
+      id: "h-letter-darwin-1",
+      text: "But I am very poorly today and very stupid and hate everybody and everything.",
+      style: "letter",
+      source: "Charles Darwin to Charles Lyell, 1861",
+      difficulty: 1,
+    },
+    {
+      id: "h-overheard-johnson-1",
+      text: "Depend upon it, sir, when a man knows he is to be hanged in a fortnight, it concentrates his mind wonderfully.",
+      style: "overheard",
+      source: "Samuel Johnson, quoted in Boswell's Life of Johnson, 1777",
+      difficulty: 1,
+    },
+    {
+      id: "h-letter-byron-1",
+      text: "I have great hopes that we shall love each other all our lives as much as if we had never married at all.",
+      style: "letter",
+      source: "Lord Byron on his engagement, 1814 (adapted)",
+      difficulty: 1,
+    },
+    {
+      id: "h-diary-pepys-2",
+      text: "This morning I put on my suit with great skirts, being resolved to appear handsome.",
+      style: "diary entry",
+      source: "Samuel Pepys's diary, 1660 (adapted)",
+      difficulty: 1,
+    },
+    {
+      id: "h-letter-pascal-1",
+      text: "I have made this letter longer than usual, only because I have not had time to make it shorter.",
+      style: "letter",
+      source: "Blaise Pascal, Provincial Letters, 1657 (translated)",
+      difficulty: 2,
+    },
   ],
   ai: [
+    // ——— Warm-up tier: written by Claude Fable 5 (2026-07-16), deliberately
+    // saturated with the tells everyone memes about. The opening act — if you
+    // know, you know, and you feel great about knowing. ———
+    {
+      id: "a-easy-email-1",
+      text: "I hope this email finds you well! I just wanted to circle back and touch base regarding our shared synergies. Let's not just think outside the box — let's redefine it. Please don't hesitate to reach out!",
+      style: "email",
+      model: "Claude Fable 5",
+      tell: "It found you well, it circled back, and it touched base — the full corporate séance in four sentences.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-diary-1",
+      text: "Today I delved into the rich tapestry of my morning routine. It wasn't just coffee — it was a journey. In today's fast-paced world, taking a moment to truly pause is nothing short of a game-changer.",
+      style: "diary entry",
+      model: "Claude Fable 5",
+      tell: "'Delve' and 'rich tapestry' in one entry — the machine showed its whole hand.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-social-1",
+      text: "Unpopular opinion: kindness is free. ✨ Let that sink in. It's not just a mindset — it's a movement. Who's with me? 💪 #Blessed #GrowthMindset",
+      style: "social post",
+      model: "Claude Fable 5",
+      tell: "Inspiration-bot bingo: a sparkle emoji, 'let that sink in', and a hashtag prayer.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-social-2",
+      text: "Success isn't a destination — it's a journey. And the journey? It's not about the miles — it's about the moments. Read that again.",
+      style: "social post",
+      model: "Claude Fable 5",
+      tell: "Em dashes wholesale, plus 'Read that again' — the engagement-bait sign-off.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-review-1",
+      text: "This blender isn't just an appliance — it's a testament to human innovation. From smoothies to soups, it seamlessly elevates your culinary journey. A true game-changer. Ten out of ten, would delve again.",
+      style: "product review",
+      model: "Claude Fable 5",
+      tell: "No blender has ever been a testament to anything. Note the em dash doing motivational work.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-news-1",
+      text: "In a world where technology evolves at a breakneck pace, one local bakery is redefining what it means to rise. Their secret? A perfect blend of tradition and innovation.",
+      style: "news lede",
+      model: "Claude Fable 5",
+      tell: "'In a world where…' — the movie-trailer opening no reporter has ever actually filed.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-travel-1",
+      text: "This hidden gem, nestled in the heart of the old quarter, is a must-visit destination that seamlessly blends tradition and innovation, offering unforgettable experiences for travelers and locals alike.",
+      style: "travel note",
+      model: "Claude Fable 5",
+      tell: "'Hidden gem' + 'nestled' + 'seamlessly blends' — the travel-slop trifecta, in one sentence.",
+      difficulty: 1,
+    },
+    {
+      id: "a-easy-overheard-1",
+      text: "Overheard at the gym: consistency isn't just a habit — it's a lifestyle. Honestly? That hit different. Let that sink in. 💯",
+      style: "overheard",
+      model: "Claude Fable 5",
+      tell: "Nobody at the gym talks in LinkedIn captions.",
+      difficulty: 1,
+    },
+    // ——— Mid tier additions (2026-07-16): plausible, quiet, slightly too tidy. ———
+    {
+      id: "a-recipe-weeknight-1",
+      text: "Weeknight pasta for when the day won. Fifteen minutes, one pan, and the parmesan rind you forgot you saved doing most of the heavy lifting.",
+      style: "recipe intro",
+      model: "Claude Fable 5",
+      tell: "Cozy and competent, but engineered — 'for when the day won' is a headline, not a memory.",
+      difficulty: 2,
+    },
+    {
+      id: "a-news-library-1",
+      text: "The library's roof fund reached its goal Tuesday after an anonymous donor covered the final $4,200, ending a drive that began with a bake sale in March.",
+      style: "news lede",
+      model: "Claude Fable 5",
+      tell: "Almost perfect wire copy — but every number resolves too neatly, like a story writing itself backward.",
+      difficulty: 2,
+    },
+    {
+      id: "a-letter-seeds-1",
+      text: "Dear Sam — the seeds you sent came up in rows so straight I suspect them of ambition. Write when the harvest lets you.",
+      style: "letter",
+      model: "Claude Fable 5",
+      tell: "Charming, but the wit is load-bearing — real farm letters spend more words on weather and debt.",
+      difficulty: 2,
+    },
     // ——— Period-voice hard tier: written by Claude Fable 5 (2026-07-16) to
     // pair against the real public-domain passages above. ———
     {

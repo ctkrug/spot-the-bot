@@ -6,7 +6,7 @@ describe("About", () => {
   it("answers the primary query in the heading and names the current week", () => {
     render(<About weekOf="2026-07-13" />);
     expect(
-      screen.getByRole("heading", { level: 1, name: /AI-or-human text game/i }),
+      screen.getByRole("heading", { level: 1, name: /AI-or-human test that scores your AIQ/i }),
     ).toBeInTheDocument();
     expect(screen.getByText("2026-07-13")).toBeInTheDocument();
   });
